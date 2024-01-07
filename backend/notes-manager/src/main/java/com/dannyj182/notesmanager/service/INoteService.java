@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface INoteService {
     NoteDTO saveNote(NoteDTO noteDTO);
-    List<NoteDTO> findNotesByUserId(Long userId);
+    List<NoteDTO> findNotesByUserId(long userId);
     boolean deleteById(long noteId);
     NoteDTO editNote(long noteId, NoteDTO noteDTO);
 }

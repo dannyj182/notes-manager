@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,11 +31,12 @@ public class NoteService implements INoteService{
         Note note = mapper.toNote(noteDTO);
         note.setUser(user);
         note.setStatus(status);
+        note.setModificationDate(LocalDateTime.now());
         return mapper.toNoteDTO(repository.save(note));
     }
 
     @Override
-    public List<NoteDTO> findNotesByUserId(Long userId) {
+    public List<NoteDTO> findNotesByUserId(long userId) {
         return mapper.toNotesDTO(repository.findByUser_UserId(userId));
     }
 
@@ -49,7 +49,6 @@ public class NoteService implements INoteService{
 
     @Override
     public NoteDTO editNote(long noteId, NoteDTO noteDTO) {
-        if (noteDTO == null) return null;
         Optional<Note> optionalNote = repository.findById(noteId);
         if (optionalNote.isEmpty()) return null;
         Note note = optionalNote.get();
@@ -67,26 +66,16 @@ public class NoteService implements INoteService{
 
     private void editNote(NoteDTO noteDTO, Note note){
         if (noteDTO.getTitle() != null) note.setTitle(noteDTO.getTitle());
-        if (noteDTO.getDescription() != null) note.setDescription(note.getDescription());
+        if (noteDTO.getDescription() != null) note.setDescription(noteDTO.getDescription());
         this.setStatus(noteDTO, note);
-        this.setModificationDate(noteDTO, note);
+        note.setModificationDate(LocalDateTime.now());
     }
 
     private void setStatus(NoteDTO noteDTO, Note note) {
         if (noteDTO.getStatus() != null){
             Status status = this.getStatus(noteDTO.getStatus());
-            if (status != null && !status.getStatus().equals(noteDTO.getStatus())){
+            if (status != null && !status.getStatus().equals(note.getStatus().getStatus())){
                 note.setStatus(status);
-            }
-        }
-    }
-
-    private void setModificationDate(NoteDTO noteDTO, Note note) {
-        if (noteDTO.getModificationDate() != null){
-            try {
-                note.setModificationDate(LocalDateTime.parse(noteDTO.getModificationDate()));
-            } catch (DateTimeParseException e){
-                System.out.println("Error: " + e);
             }
         }
     }

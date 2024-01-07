@@ -18,8 +18,10 @@ public interface NoteMapper {
     NoteDTO toNoteDTO(Note note);
     List<NoteDTO> toNotesDTO(List<Note> notes);
     @Mappings({
+            @Mapping(target = "noteId", ignore = true),
             @Mapping(target = "user", ignore = true),
             @Mapping(target = "status", ignore = true),
+            @Mapping(target = "modificationDate", ignore = true),
     })
     Note toNote(NoteDTO noteDTO);
 }

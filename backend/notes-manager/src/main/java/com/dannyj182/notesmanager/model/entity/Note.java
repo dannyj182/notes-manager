@@ -20,10 +20,10 @@ public class Note {
     private String title;
     private String description;
     @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
-    @JoinColumn(name = "status_id", insertable = false, updatable = false, nullable = false)
+    @JoinColumn(name = "status_id")
     private Status status;
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime modificationDate;
