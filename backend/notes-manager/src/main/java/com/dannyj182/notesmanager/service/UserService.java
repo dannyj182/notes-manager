@@ -12,7 +12,7 @@ public class UserService implements IUserService {
     private final IUserRepository repository;
 
     @Override
-    public User findById(long userId) {
-        return repository.findById(userId).orElse(null);
+    public User findById(String userName) {
+        return repository.findById(userName).orElse(null);
     }
 }

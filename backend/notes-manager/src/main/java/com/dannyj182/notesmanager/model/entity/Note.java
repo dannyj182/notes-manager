@@ -20,7 +20,7 @@ public class Note {
     private String title;
     private String description;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_name")
     private User user;
     @ManyToOne
     @JoinColumn(name = "status_id")

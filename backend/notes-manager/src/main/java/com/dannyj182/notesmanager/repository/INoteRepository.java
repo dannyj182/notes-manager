@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface INoteRepository extends CrudRepository<Note, Long> {
-    List<Note> findByUser_UserId(Long userId);
+    List<Note> findAllByUser_UserName(String userName);
 }

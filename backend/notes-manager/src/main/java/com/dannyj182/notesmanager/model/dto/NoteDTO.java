@@ -9,7 +9,6 @@ public class NoteDTO {
     private long noteId;
     private String title;
     private String description;
-    private long userId;
     private String status;
     private String modificationDate;
 }

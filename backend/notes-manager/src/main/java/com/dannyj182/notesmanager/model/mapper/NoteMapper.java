@@ -12,13 +12,11 @@ import java.util.List;
 public interface NoteMapper {
 
     @Mappings({
-            @Mapping(source = "user.userId", target = "userId"),
             @Mapping(source = "status.status", target = "status")
     })
     NoteDTO toNoteDTO(Note note);
     List<NoteDTO> toNotesDTO(List<Note> notes);
     @Mappings({
-            @Mapping(target = "noteId", ignore = true),
             @Mapping(target = "user", ignore = true),
             @Mapping(target = "status", ignore = true),
             @Mapping(target = "modificationDate", ignore = true),

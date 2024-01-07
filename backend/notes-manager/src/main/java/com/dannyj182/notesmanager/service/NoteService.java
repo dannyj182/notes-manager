@@ -7,11 +7,11 @@ import com.dannyj182.notesmanager.model.entity.User;
 import com.dannyj182.notesmanager.model.mapper.NoteMapper;
 import com.dannyj182.notesmanager.repository.INoteRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class NoteService implements INoteService{
 
     @Override
     public NoteDTO saveNote(NoteDTO noteDTO) {
-        User user = this.getUser(noteDTO.getUserId());
+        User user = this.getUser(this.getUsername());
         if (user == null) return null;
         Status status = this.getStatus(noteDTO.getStatus());
         if (status == null) return null;
@@ -36,28 +36,36 @@ public class NoteService implements INoteService{
     }
 
     @Override
-    public List<NoteDTO> findNotesByUserId(long userId) {
-        return mapper.toNotesDTO(repository.findByUser_UserId(userId));
+    public List<NoteDTO> findNotesByUserName() {
+        return mapper.toNotesDTO(repository.findAllByUser_UserName(this.getUsername()));
     }
 
     @Override
     public boolean deleteById(long noteId) {
-        if (!repository.existsById(noteId)) return false;
+        Note note = this.getNote(noteId);
+        if (note == null || !note.getUser().getUserName().equals(this.getUsername())) return false;
         repository.deleteById(noteId);
         return true;
     }
 
     @Override
     public NoteDTO editNote(long noteId, NoteDTO noteDTO) {
-        Optional<Note> optionalNote = repository.findById(noteId);
-        if (optionalNote.isEmpty()) return null;
-        Note note = optionalNote.get();
+        Note note = this.getNote(noteId);
+        if (note == null || !note.getUser().getUserName().equals(this.getUsername())) return null;
         this.editNote(noteDTO, note);
         return mapper.toNoteDTO(repository.save(note));
     }
 
-    private User getUser(long userId){
-        return userService.findById(userId);
+    private Note getNote(long noteId){
+        return repository.findById(noteId).orElse(null);
+    }
+
+    private String getUsername(){
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+    }
+
+    private User getUser(String userName){
+        return userService.findById(userName);
     }
 
     private Status getStatus(String status){

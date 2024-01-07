@@ -23,9 +23,9 @@ public class NoteController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<NoteDTO>> findNotesByUserId(@PathVariable long userId){
-        return new ResponseEntity<>(service.findNotesByUserId(userId), HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity<List<NoteDTO>> findNotesByUser(){
+        return new ResponseEntity<>(service.findNotesByUserName(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{noteId}")
