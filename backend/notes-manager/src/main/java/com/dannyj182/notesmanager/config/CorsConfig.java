@@ -14,6 +14,7 @@ public class CorsConfig {
 
     private static final String URL = "http://localhost:8081";
     private static final String[] METHODS = {"GET", "POST", "PUT", "DELETE"};
+    private static final String[] HEADERS = {"*"};
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -22,6 +23,7 @@ public class CorsConfig {
         corsConfiguration.setAllowedOrigins(List.of(URL));
         corsConfiguration.setAllowedMethods(Arrays.asList(METHODS));
         corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setExposedHeaders(Arrays.asList(HEADERS));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
