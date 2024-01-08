@@ -32,7 +32,7 @@ export default new Vuex.Store({
         loguearse(state, responseLogin) {
             state.isLogin = true
             state.token = responseLogin.headers.authorization
-            state.username = responseLogin.config.data.username
+            state.username = JSON.parse(responseLogin.config.data).username
         },
     },
     plugins:[
