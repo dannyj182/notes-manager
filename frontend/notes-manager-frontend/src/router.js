@@ -4,6 +4,7 @@ import VueRouter from "vue-router"
 import Index from './components/Index.vue'
 import Login from './components/Login.vue'
 import Notes from './components/Notes.vue'
+import Tags from './components/Tags.vue'
 import NotFound from './components/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -15,6 +16,7 @@ export const router = new VueRouter({
         {path: '/index' , component: Index },
         {path: '/login' , component: Login },
         {path: '/notes' , component: Notes },
+        {path: '/tags' , component: Tags },
         {path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
     ]
 })

@@ -13,6 +13,10 @@
               <button type="button" class="btn btn-outline-primary" @click="setLastStatus('deleted')">Trash</button>
             </div>
           </div>
+          <div class="d-flex justify-content-start">
+            <button type="button" class="btn btn-outline-secondary" @click="showAllNotes()">All</button>
+            <button v-for="(tag, index) in tags" :key="index" type="button" class="btn btn-outline-secondary" @click="filterByTagName(tag.name)">{{ tag.name }}</button>
+            </div>
           <div v-if="filteredNotes.length">
             <div class="card-group">
               <div v-for="(note, index) in filteredNotes" :key="index">
@@ -25,15 +29,23 @@
                       <button v-show="lastStatus == 'deleted'" class="btn btn-outline-secondary mr-1 p-0" @click="deleteNote(note, 'deleted')">Delete</button>
                     </div>
                   </div>
-                  <div class="card-header" @click="editNote(note, index)">
+                  <div class="card-header" @click="editNote(note)">
                     <div class="row justify-content-start">
                       <div class="ml-1">{{ note.title }}</div>
                     </div>
                   </div>
-                  <div class="card-body" @click="editNote(note, index)">
+                  <div class="card-body" @click="editNote(note)">
                     <p class="card-text">{{ note.description }}</p>
                   </div>
-                  <div class="card-footer" @click="editNote(note, index)">
+                  <div class="card-body">
+                    <div v-for="(tag, index) in note.tags" :key="index">
+                      <div class="d-flex justify-content-between border border-dark">
+                        <div class="mr-1">{{ tag.name }}</div>
+                        <button class="btn btn-outline-secondary mr-1 p-0" @click="deleteTag(note, tag)">X</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-footer" @click="editNote(note)">
                     <small class="text-muted">Modified: {{ note.modificationDate | dateformat }}</small>
                   </div>
                 </div>
@@ -69,6 +81,18 @@
                     />
                   </validate>
                 </div>
+                <div class="card-body">
+                  <validate tag="div">
+                    <label for="tag">Tag</label>
+                    <select type="text" id="tag" class="form-control" v-model="formData.tag"
+                    name="tag"
+                    required
+                    >
+                      <option disabled>Select a tag</option>
+                      <option v-for="(tag, index) in tags" :key="index" :value="tag">{{ tag.name }}</option>
+                    </select>
+                  </validate>
+                </div>
               </div>
             </div>
           </vue-form>
@@ -87,10 +111,12 @@
     mounted () {
       this.goIndex()
       this.getNotes()
+      this.getTags()
     },
     data () {
       return {
         url: this.$store.state.url + 'notes/',
+        urlTag: this.$store.state.url + 'tags/',
         editMode: false,
         newNote: {
           title: '',
@@ -103,8 +129,9 @@
         formData: this.getInitialData(),
         formState: {},
         editedId: '',
-        editedIndex: '',
         lastStatus: 'active',
+        tags: [],
+        noteEdited: {},
       }
     },
     methods: {
@@ -141,10 +168,10 @@
           console.error('Error in addNote', e.message)
         }
       },
-      editNote(note, index){
+      editNote(note){
         this.editMode = true;
         this.editedId = note.noteId;
-        this.editedIndex = index;
+        this.noteEdited = note;
         this.formData = {
           title: note.title,
           description: note.description,
@@ -152,9 +179,12 @@
       },
       async saveNote(){
         this.editMode = false;
-        const noteEdited = { ...this.formData }
+        const noteDTO = { ...this.formData }
+        this.noteEdited.title = noteDTO.title;
+        this.noteEdited.description = noteDTO.description;
+        this.noteEdited.tags.push(noteDTO.tag);
         try{
-          const { data : note } = await this.axios.put(this.url + this.editedId, noteEdited, {
+          const { data : note } = await this.axios.put(this.url + this.editedId, this.noteEdited, {
             headers: {
                 'Authorization': `Bearer ${this.$store.state.token}`,
                 'content-type' : 'application/json'
@@ -164,7 +194,6 @@
           this.notes.unshift(note);
           this.updateList(this.lastStatus);
           this.editedId = '';
-          this.editedIndex = '';
         }
         catch(e){ 
           console.error('Error in saveNote', e.message)
@@ -221,7 +250,43 @@
       filterList(noteId){
         this.filteredNotes = this.notes.filter(note => note.noteId != noteId);
         this.notes = this.notes.filter(note => note.noteId != noteId);
-      }
+      },
+      async getTags(){
+        if(this.$store.state.isLogin){
+          try{
+            const { data : tags } = await this.axios(this.urlTag, {
+              headers: {
+                  'Authorization': `Bearer ${this.$store.state.token}`
+              }
+          })
+            this.tags = tags;
+          } catch (e) {
+            console.error('Error in getTags', e.message);
+          }
+        }
+      },
+      async deleteTag(note, tag){
+        note.tags.splice(note.tags.indexOf(tag), 1)
+        try{
+          const { data : noteEdited } = await this.axios.put(this.url + note.noteId, note, {
+            headers: {
+                'Authorization': `Bearer ${this.$store.state.token}`,
+                'content-type' : 'application/json'
+            }
+          })
+          this.filterList(noteEdited.noteId);
+          this.filteredNotes.unshift(noteEdited);
+        }
+        catch(e){ 
+          console.error('Error in saveNote', e.message)
+        }
+      },
+      filterByTagName(name){
+        this.filteredNotes = this.notes.filter(note => note.tags.some(tag => tag.name == name));
+      },
+      showAllNotes(){
+        this.filteredNotes = this.notes;
+      },
     },
 }
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter
 @AllArgsConstructor
@@ -27,4 +28,6 @@ public class Note {
     private Status status;
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime modificationDate;
+    @ManyToMany
+    private List<Tag> tags;
 }

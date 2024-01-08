@@ -22,6 +22,11 @@
               <a class="nav-link" href="#">Notes</a>
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/tags">
+              <a class="nav-link" href="#">Tags</a>
+            </router-link>
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" 
             href="#" 
