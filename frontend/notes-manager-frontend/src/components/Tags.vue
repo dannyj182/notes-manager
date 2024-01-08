@@ -36,6 +36,12 @@
           </div>
         </div>
       </div>
+      <div v-if="showError" class="card-group mt-2">
+        <div class="row justify-content-start">
+          <div class="card-body text-danger py-1 pl-4 pr-1">{{ errorMessage }}</div>
+          <button class="btn btn-outline-danger px-1" @click="closeWindow()">Close</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -57,6 +63,8 @@
         tagName: '',
         formData: this.getInitialData(),
         formState: {},
+        showError: false,
+        errorMessage: '',
       }
     },
     methods: {
@@ -78,6 +86,7 @@
         }
       },
       async deleteTag(tag){
+        this.closeWindow()
         try{
           await this.axios.delete(this.url + tag.name, {
             headers: {
@@ -85,12 +94,25 @@
               'content-type' : 'application/json'
             }
           })
+          this.tags.splice(this.tags.indexOf(tag), 1)
         }
         catch(e){ 
           console.error('Error in deleteTag', e.message)
+          if (e.response.status === 409) {
+            this.activateErrorWindow()
+          }
         }
-        this.tags.splice(this.tags.indexOf(tag), 1)
-      },async saveTag(){
+      },
+      activateErrorWindow(){
+        this.showError = true
+        this.errorMessage = 'Tags assigned to notes cannot be deleted'
+      },
+      closeWindow(){
+        this.showError = false
+        this.errorMessage = ''
+      },
+      async saveTag(){
+        this.closeWindow()
         const newTag = { ...this.formData }
         this.formData = this.getInitialData();
         if(this.validateInput(newTag)) return
