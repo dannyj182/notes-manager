@@ -28,6 +28,7 @@ public class Note {
     private Status status;
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime modificationDate;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(name = "note_tag", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "name"))
     private List<Tag> tags;
 }
