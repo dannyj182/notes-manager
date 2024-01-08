@@ -13,7 +13,7 @@ export default new Vuex.Store({
         token: '',
         username: '',
         responseLogin: '',
-        url: 'http://192.168.0.167:8080/',
+        url: '/',
     },
     actions : {
         desloguearse({commit}){
