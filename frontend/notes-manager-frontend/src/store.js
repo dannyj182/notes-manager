@@ -10,13 +10,30 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state : {
         isLogin : false,
-        url: '',
+        token: '',
+        username: '',
+        responseLogin: '',
+        url: 'http://192.168.0.167:8080/',
     },
     actions : {
-        
+        desloguearse({commit}){
+            commit('desloguearse')   
+        },
+        loguearse({commit}, res) {
+            commit('loguearse', res)  
+        },
     },
     mutations : {
-        
+        desloguearse(state) {
+            state.isLogin = false
+            state.token = ''
+            state.username = ''
+        },
+        loguearse(state, responseLogin) {
+            state.isLogin = true
+            state.token = responseLogin.headers.authorization
+            state.username = responseLogin.config.data.username
+        },
     },
     plugins:[
         new VuexPersistence({

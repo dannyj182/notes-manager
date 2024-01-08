@@ -1,18 +1,22 @@
 <template>
   
   <section>
-    <Notes/>
+    <Navbar/>
+    <router-view></router-view>
+    <Footer/>
   </section>
 
 </template>
 
 <script>
-import Notes from './components/Notes.vue'
+import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
   components: {
-    Notes,
+    Navbar,
+    Footer,
   }
 }
 </script>

@@ -2,24 +2,39 @@
 
   <section>
     <div>
-      <div class="jumbotron mb-0">
+      <div class="jumbotron mb-0 p-5">
         <div v-if="!editMode">
-          <button type="button" class="btn btn-outline-primary" @click="addNote()">Add</button>
-          <div v-if="notes.length">
+          <h4>{{ this.lastStatus | title }}</h4>
+          <div class="d-flex justify-content-start">
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-outline-primary mr-1" @click="addNote()">Add</button>
+              <button type="button" class="btn btn-outline-primary mr-1" @click="setLastStatus('active')">Home</button>
+              <button type="button" class="btn btn-outline-primary mr-1" @click="setLastStatus('archived')">Archive</button>
+              <button type="button" class="btn btn-outline-primary" @click="setLastStatus('deleted')">Trash</button>
+            </div>
+          </div>
+          <div v-if="filteredNotes.length">
             <div class="card-group">
-              <div v-for="(note, index) in notes" :key="index">
+              <div v-for="(note, index) in filteredNotes" :key="index">
                 <div class="card bg-light mt-1 mr-1" style="max-width: 18rem;">
                   <div class="card-header">
-                    <div class="row justify-content-between">
-                      <div class="ml-1" @click="editNote(note)">{{ note.title }}</div>
-                      <button class="btn btn-outline-secondary mr-1 p-0" @click="deleteNote(index)">Delete</button>
+                    <div class="row justify-content-center">
+                      <button v-show="lastStatus != 'active'" class="btn btn-outline-secondary mr-1 p-0" @click="changeStatus(note, 'active')">Activate</button>
+                      <button v-show="lastStatus != 'archived'" class="btn btn-outline-secondary mr-1 p-0" @click="changeStatus(note, 'archived')">Archive</button>
+                      <button v-show="lastStatus != 'deleted'" class="btn btn-outline-secondary mr-1 p-0" @click="changeStatus(note, 'deleted')">Delete</button>
+                      <button v-show="lastStatus == 'deleted'" class="btn btn-outline-secondary mr-1 p-0" @click="deleteNote(note, 'deleted')">Delete</button>
                     </div>
                   </div>
-                  <div class="card-body" @click="editNote(note)">
+                  <div class="card-header" @click="editNote(note, index)">
+                    <div class="row justify-content-start">
+                      <div class="ml-1">{{ note.title }}</div>
+                    </div>
+                  </div>
+                  <div class="card-body" @click="editNote(note, index)">
                     <p class="card-text">{{ note.description }}</p>
                   </div>
-                  <div class="card-footer" @click="editNote(note)">
-                    <small class="text-muted">Modified: {{ note.modified }}</small>
+                  <div class="card-footer" @click="editNote(note, index)">
+                    <small class="text-muted">Modified: {{ note.modificationDate | dateformat }}</small>
                   </div>
                 </div>
               </div>
@@ -70,102 +85,125 @@
     name: 'src-components-notes',
     props: [],
     mounted () {
-
+      this.goIndex()
+      this.getNotes()
     },
     data () {
       return {
+        url: this.$store.state.url + 'notes/',
         editMode: false,
         newNote: {
           title: '',
           description: '',
-          status: '',
-          modified: ''
+          status: 'active',
+          modificationDate: new Date().toISOString(),
         },
-        notes: [
-          {
-            title: 'Note 1',
-            description: 'Description 1',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 2',
-            description: 'Description 2',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 3',
-            description: 'Description 3',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 4',
-            description: 'Description 4',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 5',
-            description: 'Description 5',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 6',
-            description: 'Description 6',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 7',
-            description: 'Description 7',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 8',
-            description: 'Description 8',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 9',
-            description: 'Description 9',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-          {
-            title: 'Note 10',
-            description: 'Description 10',
-            status: 'active',
-            modified: '2020-01-01',
-          },
-        ],
+        notes: [],
+        filteredNotes: [],
         formData: this.getInitialData(),
         formState: {},
+        editedId: '',
+        editedIndex: '',
+        lastStatus: 'active',
       }
     },
     methods: {
-      addNote(){
-        this.notes.unshift(this.newNote);
+      goIndex(){
+        if(!this.$store.state.isLogin) this.$router.push('/')
       },
-      editNote(note){
+      async getNotes(){
+        if(this.$store.state.isLogin){
+          try{
+            const { data : notes } = await this.axios(this.url, {
+              headers: {
+                  'Authorization': `Bearer ${this.$store.state.token}`
+              }
+          })
+            this.notes = notes;
+            this.updateList(this.lastStatus);
+          } catch (e) {
+            console.error('Error in getNotes', e.message);
+          }
+        }
+      },
+      async addNote(){
+        try{
+          const { data : note } = await this.axios.post(this.url, this.newNote, {
+            headers: {
+                'Authorization': `Bearer ${this.$store.state.token}`,
+                'content-type' : 'application/json'
+            }
+          })
+          this.notes.unshift(note);
+          this.updateList(this.lastStatus);
+        }
+        catch(e){ 
+          console.error('Error in addNote', e.message)
+        }
+      },
+      editNote(note, index){
         this.editMode = true;
+        this.editedId = note.noteId;
+        this.editedIndex = index;
         this.formData = {
           title: note.title,
           description: note.description,
         }
       },
-      saveNote(){
+      async saveNote(){
         this.editMode = false;
+        const noteEdited = { ...this.formData }
+        try{
+          const { data : note } = await this.axios.put(this.url + this.editedId, noteEdited, {
+            headers: {
+                'Authorization': `Bearer ${this.$store.state.token}`,
+                'content-type' : 'application/json'
+            }
+          })
+          this.filterList(note.noteId);
+          this.notes.unshift(note);
+          this.updateList(this.lastStatus);
+          this.editedId = '';
+          this.editedIndex = '';
+        }
+        catch(e){ 
+          console.error('Error in saveNote', e.message)
+        }
       },
       back(){
         this.editMode = false;
       },
-      deleteNote(index){
-        this.notes.splice(index, 1);
+      async changeStatus(note, status){
+        this.filterList(note.noteId);
+        note.status = status;
+        try{
+          const { data : noteEdited } = await this.axios.put(this.url + note.noteId, note, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.state.token}`,
+              'content-type' : 'application/json'
+            }
+          })
+          this.notes.unshift(noteEdited);
+          this.updateList(this.lastStatus);
+        }
+        catch(e){ 
+          console.error('Error in changeStatus', e.message)
+        }
+      },
+      async deleteNote(note){
+        this.filterList(note.noteId);
+        try{
+          await this.axios.delete(this.url + note.noteId, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.state.token}`,
+              'content-type' : 'application/json'
+            }
+          })
+        }
+        catch(e){ 
+          console.error('Error in deleteNote', e.message)
+        }
+        this.updateList(this.lastStatus);
       },
       getInitialData() {
         return {
@@ -173,10 +211,18 @@
           description: '',
         }
       },
+      updateList(status){
+        this.filteredNotes = this.notes.filter(note => note.status == status);
+      },
+      setLastStatus(status){
+        this.lastStatus = status;
+        this.updateList(status);
+      },
+      filterList(noteId){
+        this.filteredNotes = this.notes.filter(note => note.noteId != noteId);
+        this.notes = this.notes.filter(note => note.noteId != noteId);
+      }
     },
-    computed: {
-
-    }
 }
 
 
