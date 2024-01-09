@@ -16,9 +16,11 @@ This link will take you to the live version of the application so you can test a
 
 ### Versions
 
+```
 Node: v20.10.0
 npm: 10.2.3
 @vue/cli 5.0.8
+```
 
 ### Clone the Repository
 
@@ -81,9 +83,11 @@ Este enlace te llevará a la versión en vivo de la aplicación para que puedas 
 
 ### Versiones
 
+```
 Node: v20.10.0
 npm: 10.2.3
 @vue/cli 5.0.8
+```
 
 ### Clonar el Repositorio
 
