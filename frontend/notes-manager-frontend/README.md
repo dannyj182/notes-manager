@@ -1,4 +1,4 @@
-# Notes Manager
+# Notes Manager - Frontend
 
 It is a web application that allows you to manage notes and tags, designed for general use.
 
@@ -13,6 +13,12 @@ You can access (soon) to the deployed version of this project in the [Web]().
 This link will take you to the live version of the application so you can test and explore it.
 
 ## Project setup
+
+### Versions
+
+Node: v20.10.0
+npm: 10.2.3
+@vue/cli 5.0.8
 
 ### Clone the Repository
 
@@ -57,7 +63,7 @@ You can access the backend code to learn more about server logic and its integra
 
 ---
 
-# Gestor de Notas
+# Gestor de Notas - Frontend
 
 Es una aplicación web que permite administrar notas y etiquetas, diseñada para uso general.
 
@@ -72,6 +78,12 @@ Puedes acceder (proximamente) a la versión desplegada de este proyecto en la [W
 Este enlace te llevará a la versión en vivo de la aplicación para que puedas probarla y explorarla.
 
 ## Configuración del Proyecto
+
+### Versiones
+
+Node: v20.10.0
+npm: 10.2.3
+@vue/cli 5.0.8
 
 ### Clonar el Repositorio
 
