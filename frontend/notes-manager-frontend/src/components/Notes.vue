@@ -5,7 +5,7 @@
       <div class="jumbotron mb-0 p-5">
         <div v-if="!editMode">
           <h4>{{ this.lastStatus | title }}</h4>
-          <div class="d-flex justify-content-start">
+          <div class="d-flex justify-content-start mb-1">
             <div class="d-flex justify-content-between">
               <button type="button" class="btn btn-secondary mr-1 p-1" @click="addNote()">Add</button>
               <button type="button" class="btn btn-primary mr-1 p-1" @click="setLastStatus('active')">Home</button>
@@ -13,9 +13,12 @@
               <button type="button" class="btn btn-warning mr-1 p-1" @click="setLastStatus('deleted')">Trash</button>
             </div>
           </div>
-          <div class="d-flex justify-content-start">
-            <button v-for="(tag, index) in tags" :key="index" type="button" class="btn btn-info mr-1 my-1 p-1" @click="filterByTagName(tag.name)">{{ tag.name }}</button>
+          <div>
+            <h4>Tags</h4>
+            <div class="d-flex justify-content-start">
+              <button v-for="(tag, index) in tags" :key="index" type="button" class="btn btn-info mr-1 my-1 p-1" @click="filterByTagName(tag.name)">{{ tag.name }}</button>
             </div>
+          </div>
           <div v-if="filteredNotes.length">
             <div class="card-group">
               <div v-for="(note, index) in filteredNotes" :key="index">
@@ -178,10 +181,10 @@
       },
       async saveNote(){
         this.editMode = false;
-        const noteDTO = { ...this.formData }
+        let noteDTO = { ...this.formData }
         this.noteEdited.title = noteDTO.title;
         this.noteEdited.description = noteDTO.description;
-        this.noteEdited.tags.push(noteDTO.tag);
+        if(noteDTO.tag) this.noteEdited.tags.push(noteDTO.tag);
         try{
           const { data : note } = await this.axios.put(this.url + this.editedId, this.noteEdited, {
             headers: {
@@ -239,12 +242,12 @@
           description: '',
         }
       },
-      updateList(status){
-        this.filteredNotes = this.notes.filter(note => note.status == status);
-      },
       setLastStatus(status){
         this.lastStatus = status;
         this.updateList(status);
+      },
+      updateList(status){
+        this.filteredNotes = this.notes.filter(note => note.status == status);
       },
       filterList(noteId){
         this.filteredNotes = this.notes.filter(note => note.noteId != noteId);
@@ -273,7 +276,7 @@
                 'content-type' : 'application/json'
             }
           })
-          this.filterList(noteEdited.noteId);
+          this.filteredNotes.splice(this.filteredNotes.indexOf(note), 1)
           this.filteredNotes.unshift(noteEdited);
         }
         catch(e){ 
