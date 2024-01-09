@@ -15,7 +15,7 @@
                     required
                     />
                   </validate>
-                  <button class="btn btn-outline-secondary mr-1 p-0" :disabled="!formState.$dirty">Save</button>
+                  <button class="btn btn-success mr-1 p-1" :disabled="!formState.$dirty">Save</button>
                 </div>
             </div>
           </div>
@@ -30,7 +30,7 @@
                 {{ tag.name }}
               </div>
               <div class="card-header">
-                <button class="btn btn-outline-secondary mr-1 p-0" @click="deleteTag(tag)">Delete</button>
+                <button class="btn btn-danger mr-1 p-1" @click="deleteTag(tag)">Delete</button>
               </div>
             </div>
           </div>
