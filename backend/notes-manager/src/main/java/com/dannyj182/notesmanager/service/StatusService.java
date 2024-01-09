@@ -14,7 +14,7 @@ public class StatusService implements IStatusService {
     private final IStatusRepository repository;
 
     @Override
-    public Optional<Status> findByStatus(String status) {
-        return repository.findByStatus(status);
+    public Optional<Status> findById(String status) {
+        return repository.findById(status);
     }
 }

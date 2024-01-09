@@ -70,7 +70,7 @@ public class NoteService implements INoteService{
     }
 
     private Status getStatus(String status){
-        return statusService.findByStatus(status).orElse(null);
+        return statusService.findById(status).orElse(null);
     }
 
     private void editNote(NoteDTO noteDTO, Note note){

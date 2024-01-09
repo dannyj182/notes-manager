@@ -1,6 +1,7 @@
 package com.dannyj182.notesmanager.model.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,5 @@ import lombok.Setter;
 public class Status {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long statusId;
-    @Column(nullable = false, unique = true)
     private String status;
 }
