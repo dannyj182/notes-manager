@@ -1,4 +1,4 @@
-# Notes Manager
+# Notes Manager - Backend
 
 This is the backend project that supports the web application that allows you to manage notes and tags, designed for general use.
 
@@ -13,6 +13,14 @@ You can access (soon) the deployed version of this project at [Web]().
 This link will take you to the live version of the application so you can test and explore it.
 
 ## Project Configuration
+
+### Versions
+
+```
+Java: 21
+Spring Boot: 3.2.1
+maven: 3.9.6
+```
 
 ### Cloning the Repository
 
@@ -61,7 +69,7 @@ The frontend code for this project can be found in this [repository](https://git
 
 ---
 
-# Gestor de Notas
+# Gestor de Notas - Backend
 
 Este es el proyecto Backend que soporta a la aplicación web que permite administrar notas y etiquetas, diseñada para uso general.
 
@@ -76,6 +84,14 @@ Puedes acceder (proximamente) a la versión desplegada de este proyecto en [Web]
 Este enlace te llevará a la versión en vivo de la aplicación para que puedas probarla y explorarla.
 
 ## Configuración del Proyecto
+
+### Versiones
+
+```
+Java: 21
+Spring Boot: 3.2.1
+maven: 3.9.6
+```
 
 ### Clonar el Repositorio
 
