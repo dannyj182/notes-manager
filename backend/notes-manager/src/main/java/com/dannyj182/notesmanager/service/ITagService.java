@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ITagService {
     TagDTO saveTag(TagDTO tagDTO);
-    List<TagDTO> findAll();
+    List<TagDTO> findTagByUserName();
     ResponseEntity<?> deleteById(String name);
     List<Tag> findAllById(List<TagDTO> tagDTOList);
 }

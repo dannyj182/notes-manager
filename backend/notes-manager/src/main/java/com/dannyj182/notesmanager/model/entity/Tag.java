@@ -1,8 +1,6 @@
 package com.dannyj182.notesmanager.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +15,7 @@ public class Tag {
     @Id
     @Column(length = 50)
     private String name;
+    @ManyToOne
+    @JoinColumn(name = "user_name")
+    private User user;
 }
