@@ -8,7 +8,7 @@ For added security a login was implemented where only authenticated and authoris
 
 ## Link to Deployed Project
 
-You can access (soon) to the deployed version of this project in the [Web]().
+You can access to the deployed version of this project in the [Web](notes-manager.up.railway.app).
 
 This link will take you to the live version of the application so you can test and explore it.
 
@@ -75,7 +75,7 @@ Para mayor seguridad se implementó un login donde solo los usuarios autenticado
 
 ## Enlace al Proyecto Desplegado
 
-Puedes acceder (proximamente) a la versión desplegada de este proyecto en la [Web]().
+Puedes acceder a la versión desplegada de este proyecto en la [Web](notes-manager.up.railway.app).
 
 Este enlace te llevará a la versión en vivo de la aplicación para que puedas probarla y explorarla.
 

@@ -1,36 +1,33 @@
-Good morning, this repository has the Frontend and Backend applications that together form a system to manage notes.
+# Notes Manager
 
-In the Backend folder both projects are already together, you only have to download the repository and implement a MySQL database.
+Phases 1 and 2 complete, plus login with the help of Spring Security.
 
-DB = test
-PORT = 3306
+You must download the repository and in the root folder run the following command:
 
-This is an example configuration:
+```
+docker-compose -p notes-manager up
+```
 
-jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC
+Docker version
 
-When you run the backend, spring will generate the tables, but first you have to create the test database.
+```
+Docker: 23.0.5
+```
 
--- Create DB test
-CREATE DATABASE test;
+This will deploy a container that will connect to a cloud database that has the users loaded.
 
--- Insert records in the status table
-INSERT INTO status (status_id, status) VALUES (1, 'active');
-INSERT INTO status (status_id, status) VALUES (2, 'archived');
-INSERT INTO status (status_id, status) VALUES (3, 'deleted');
+Users to access the application
 
--- Insert records in the user table
-INSERT INTO user (last_name, name, password, user_name) VALUES ('Jimenez', 'Danny', '$2y$10$Iwbq5hnfyO1ZI4dTCI/GPeHiLC8gkvgXal/UGeVDG2UgEG5n/69NS', 'dannyj182');
-INSERT INTO user (last_name, name, password, user_name) VALUES ('Molina', 'Daniela', '$2y$10$S3ATL2qUs2yx6gos7oa20OXVsovlaM4YJjmc/vTBVZqMrCxmLiWp6', 'daniela');
-
+```
 User: dannyj182
-Password: Danny123
+Password: D@nny!23
 
-User: daniela
-Password: Daniela1990
+User: daniela1993
+Password: D@niela!23
+```
 
-The app has a login that will be authenticated with Spring Security using JWT, phases 1 and 2 have been completed.
+I tried to deploy the application in the cloud but it was not possible to log me in because of some problem with the provider or some configuration was missing that allows to log in.
 
-I'm sorry I didn't meet a better README and Docker, I tried my best but I didn't have enough time to do it.
+You can access through this [Link](notes-manager.up.railway.app).
 
 I hope you like the solution.
