@@ -59,7 +59,7 @@ npm run build
 
 ### Backend Repository
 
-The backend code corresponding to this project can be found in the [Backend Repository](https://github.com/ensolvers-github-challenges/JimenezCasares-24baa6/tree/main/backend/notes-manager).
+The backend code corresponding to this project can be found in the [Backend Repository](https://github.com/dannyj182/notes-manager.git).
 
 You can access the backend code to learn more about server logic and its integration with this frontend project.
 
@@ -126,6 +126,6 @@ npm run build
 
 ### Repositorio Backend
 
-El código del backend correspondiente a este proyecto se encuentra en el repositorio [Backend](https://github.com/ensolvers-github-challenges/JimenezCasares-24baa6/tree/main/backend/notes-manager).
+El código del backend correspondiente a este proyecto se encuentra en el repositorio [Backend](https://github.com/dannyj182/notes-manager.git).
 
 Puedes acceder al código del backend para obtener más información sobre la lógica del servidor y su integración con este proyecto de frontend.
