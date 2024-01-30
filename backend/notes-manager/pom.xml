@@ -10,11 +10,11 @@
 	</parent>
 	<groupId>com.dannyj182</groupId>
 	<artifactId>notes-manager</artifactId>
-	<version>0.0.1</version>
+	<version>1.0.0</version>
 	<name>notes-manager</name>
 	<description>Notes Manager Backend</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

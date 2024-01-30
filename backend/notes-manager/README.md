@@ -27,7 +27,7 @@ maven: 3.9.6
 First, clone this repository on your local machine using Git:
 
 ```bash
-git clone https://github.com/ensolvers-github-challenges/JimenezCasares-24baa6
+git clone https://github.com/dannyj182/notes-manager.git
 ```
 
 ### application.properties File
@@ -65,7 +65,7 @@ This backend provides an API that can be used by the frontend application. Make 
 
 ### Frontend repository
 
-The frontend code for this project can be found in this [repository](https://github.com/ensolvers-github-challenges/JimenezCasares-24baa6/tree/main/frontend/notes-manager-frontend).
+The frontend code for this project can be found in this [repository](https://github.com/dannyj182/notes-manager-frontend.git).
 
 ---
 
@@ -98,7 +98,7 @@ maven: 3.9.6
 Primero, clona este repositorio en tu máquina local utilizando Git:
 
 ```bash
-git clone https://github.com/ensolvers-github-challenges/JimenezCasares-24baa6
+git clone https://github.com/dannyj182/notes-manager.git
 ```
 
 ### Archivo application.properties
@@ -136,4 +136,4 @@ Este backend proporciona una API que puede ser utilizada por la aplicación fron
 
 ### Repositorio Frontend
 
-El código del frontend correspondiente a este proyecto se encuentra en este [repositorio](https://github.com/ensolvers-github-challenges/JimenezCasares-24baa6/tree/main/frontend/notes-manager-frontend).
+El código del frontend correspondiente a este proyecto se encuentra en este [repositorio](https://github.com/dannyj182/notes-manager-frontend.git).

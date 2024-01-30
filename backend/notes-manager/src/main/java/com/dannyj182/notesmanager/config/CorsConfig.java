@@ -12,7 +12,7 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    private static final String URL = "http://localhost:8081";
+    private static final String URL = "*";
     private static final String[] METHODS = {"GET", "POST", "PUT", "DELETE"};
     private static final String[] HEADERS = {"*"};
 
