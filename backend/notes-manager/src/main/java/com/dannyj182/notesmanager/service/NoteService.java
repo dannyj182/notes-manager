@@ -78,7 +78,7 @@ public class NoteService implements INoteService{
         if (noteDTO.getDescription() != null) note.setDescription(noteDTO.getDescription());
         this.setStatus(noteDTO, note);
         note.setModificationDate(LocalDateTime.now());
-        note.setTags(tagService.findAllById(noteDTO.getTags()));
+        if (noteDTO.getTags() != null) note.setTags(tagService.findAllById(noteDTO.getTags()));
     }
 
     private void setStatus(NoteDTO noteDTO, Note note) {
