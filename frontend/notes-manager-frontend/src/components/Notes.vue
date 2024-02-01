@@ -25,10 +25,10 @@
                 <div class="card bg-light mt-1 mr-1" style="max-width: 18rem;">
                   <div class="card-header">
                     <div class="row justify-content-center">
-                      <button v-show="lastStatus != 'active'" class="btn btn-primary mr-1 p-1" @click="changeStatus(note, 'active')">Activate</button>
-                      <button v-show="lastStatus != 'archived'" class="btn btn-success mr-1 p-1" @click="changeStatus(note, 'archived')">Archive</button>
-                      <button v-show="lastStatus != 'deleted'" class="btn btn-warning mr-1 p-1" @click="changeStatus(note, 'deleted')">Delete</button>
-                      <button v-show="lastStatus == 'deleted'" class="btn btn-danger mr-1 p-1" @click="deleteNote(note, 'deleted')">Delete</button>
+                      <button v-show="lastStatus != 'active'" class="btn btn-primary mr-1 p-1" @click="updateStatus(note, 'active')">Activate</button>
+                      <button v-show="lastStatus != 'archived'" class="btn btn-success mr-1 p-1" @click="updateStatus(note, 'archived')">Archive</button>
+                      <button v-show="lastStatus != 'deleted'" class="btn btn-warning mr-1 p-1" @click="updateStatus(note, 'deleted')">Delete</button>
+                      <button v-show="lastStatus == 'deleted'" class="btn btn-danger mr-1 p-1" @click="deleteNote(note)">Delete</button>
                     </div>
                   </div>
                   <div class="card-header" @click="editNote(note)">
@@ -43,7 +43,7 @@
                     <div v-for="(tag, index) in note.tags" :key="index">
                       <div class="d-flex justify-content-between border border-dark">
                         <div class="mr-1">{{ tag.name }}</div>
-                        <button class="btn btn-danger m-0 p-1" @click="deleteTag(note, tag)">X</button>
+                        <button class="btn btn-danger btn-small m-0 p-1" @click="deleteTag(note, tag)">X</button>
                       </div>
                     </div>
                   </div>
@@ -124,13 +124,12 @@
           title: '',
           description: '',
           status: 'active',
-          modificationDate: new Date().toISOString(),
+          tags: [],
         },
         notes: [],
         filteredNotes: [],
         formData: this.getInitialData(),
         formState: {},
-        editedId: '',
         lastStatus: 'active',
         tags: [],
         noteEdited: {},
@@ -155,104 +154,6 @@
           }
         }
       },
-      async addNote(){
-        try{
-          const { data : note } = await this.axios.post(this.url, this.newNote, {
-            headers: {
-                'Authorization': `Bearer ${this.$store.state.token}`,
-                'content-type' : 'application/json'
-            }
-          })
-          this.notes.unshift(note);
-          this.updateList(this.lastStatus);
-        }
-        catch(e){ 
-          console.error('Error in addNote', e.message)
-        }
-      },
-      editNote(note){
-        this.editMode = true;
-        this.editedId = note.noteId;
-        this.noteEdited = note;
-        this.formData = {
-          title: note.title,
-          description: note.description,
-        }
-      },
-      async saveNote(){
-        this.editMode = false;
-        let noteDTO = { ...this.formData }
-        this.noteEdited.title = noteDTO.title;
-        this.noteEdited.description = noteDTO.description;
-        if(noteDTO.tag) this.noteEdited.tags.push(noteDTO.tag);
-        try{
-          const { data : note } = await this.axios.put(this.url + this.editedId, this.noteEdited, {
-            headers: {
-                'Authorization': `Bearer ${this.$store.state.token}`,
-                'content-type' : 'application/json'
-            }
-          })
-          this.filterList(note.noteId);
-          this.notes.unshift(note);
-          this.updateList(this.lastStatus);
-          this.editedId = '';
-        }
-        catch(e){ 
-          console.error('Error in saveNote', e.message)
-        }
-      },
-      back(){
-        this.editMode = false;
-      },
-      async changeStatus(note, status){
-        this.filterList(note.noteId);
-        note.status = status;
-        try{
-          const { data : noteEdited } = await this.axios.put(this.url + note.noteId, note, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.state.token}`,
-              'content-type' : 'application/json'
-            }
-          })
-          this.notes.unshift(noteEdited);
-          this.updateList(this.lastStatus);
-        }
-        catch(e){ 
-          console.error('Error in changeStatus', e.message)
-        }
-      },
-      async deleteNote(note){
-        this.filterList(note.noteId);
-        try{
-          await this.axios.delete(this.url + note.noteId, {
-            headers: {
-              'Authorization': `Bearer ${this.$store.state.token}`,
-              'content-type' : 'application/json'
-            }
-          })
-        }
-        catch(e){ 
-          console.error('Error in deleteNote', e.message)
-        }
-        this.updateList(this.lastStatus);
-      },
-      getInitialData() {
-        return {
-          title: '',
-          description: '',
-        }
-      },
-      setLastStatus(status){
-        this.lastStatus = status;
-        this.updateList(status);
-      },
-      updateList(status){
-        this.filteredNotes = this.notes.filter(note => note.status == status);
-      },
-      filterList(noteId){
-        this.filteredNotes = this.notes.filter(note => note.noteId != noteId);
-        this.notes = this.notes.filter(note => note.noteId != noteId);
-      },
       async getTags(){
         if(this.$store.state.isLogin){
           try{
@@ -267,21 +168,118 @@
           }
         }
       },
-      async deleteTag(note, tag){
-        note.tags.splice(note.tags.indexOf(tag), 1)
+      async addNote(){
         try{
-          const { data : noteEdited } = await this.axios.put(this.url + note.noteId, note, {
+          const { data : note } = await this.axios.post(this.url, this.newNote, {
             headers: {
                 'Authorization': `Bearer ${this.$store.state.token}`,
                 'content-type' : 'application/json'
             }
           })
-          this.filteredNotes.splice(this.filteredNotes.indexOf(note), 1)
-          this.filteredNotes.unshift(noteEdited);
+          this.notes.unshift(note);
+          this.setLastStatus('active');
+        }
+        catch(e){ 
+          console.error('Error in addNote', e.message)
+        }
+      },
+      editNote(note){
+        this.editMode = true;
+        this.noteEdited = note;
+        this.formData = {
+          title: note.title,
+          description: note.description,
+        }
+      },
+      async saveNote(){
+        this.editMode = false;
+        this.updateNote();
+        try{
+          const { data : updatedNote } = await this.axios.put(this.url + this.noteEdited.noteId, this.noteEdited, {
+            headers: {
+                'Authorization': `Bearer ${this.$store.state.token}`,
+                'content-type' : 'application/json'
+            }
+          })
+          this.updateLists(this.noteEdited, updatedNote);
         }
         catch(e){ 
           console.error('Error in saveNote', e.message)
         }
+      },
+      updateNote(){
+        let noteDTO = { ...this.formData }
+        this.noteEdited.title = noteDTO.title;
+        this.noteEdited.description = noteDTO.description;
+        if(noteDTO.tag != null) this.noteEdited.tags.push(noteDTO.tag);
+      },
+      async updateStatus(note, status){
+        this.filteredNotes.splice(this.filteredNotes.indexOf(note), 1)
+        this.notes.splice(this.notes.indexOf(note), 1)
+        note.status = status;
+        try{
+          const { data : updatedNote } = await this.axios.put(this.url + note.noteId, note, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.state.token}`,
+              'content-type' : 'application/json'
+            }
+          })
+          this.notes.unshift(updatedNote);
+        }
+        catch(e){ 
+          console.error('Error in updateStatus', e.message)
+        }
+      },
+      async deleteNote(note){
+        this.filteredNotes.splice(this.filteredNotes.indexOf(note), 1)
+        try{
+          await this.axios.delete(this.url + note.noteId, {
+            headers: {
+              'Authorization': `Bearer ${this.$store.state.token}`,
+              'content-type' : 'application/json'
+            }
+          })
+        }
+        catch(e){ 
+          console.error('Error in deleteNote', e.message)
+        }
+      },
+      async deleteTag(note, tag){
+        note.tags.splice(note.tags.indexOf(tag), 1)
+        try{
+          const { data : updatedNote } = await this.axios.put(this.url + note.noteId, note, {
+            headers: {
+                'Authorization': `Bearer ${this.$store.state.token}`,
+                'content-type' : 'application/json'
+            }
+          })
+          this.updateLists(note, updatedNote);
+        }
+        catch(e){ 
+          console.error('Error in deleteTag', e.message)
+        }
+      },
+      updateLists(note, updatedNote){
+        this.filteredNotes.splice(this.filteredNotes.indexOf(note), 1);
+        this.filteredNotes.unshift(updatedNote);
+        this.notes.splice(this.notes.indexOf(note), 1);
+        this.notes.unshift(updatedNote);
+      },
+      back(){
+        this.editMode = false;
+      },
+      getInitialData() {
+        return {
+          title: '',
+          description: '',
+        }
+      },
+      setLastStatus(status){
+        this.lastStatus = status;
+        this.updateList(this.lastStatus);
+      },
+      updateList(status){
+        this.filteredNotes = this.notes.filter(note => note.status == status);
       },
       filterByTagName(name){
         this.filteredNotes = this.notes.filter(note => note.tags.some(tag => tag.name == name));
@@ -293,5 +291,7 @@
 </script>
 
 <style scoped lang="css">
-
+.btn-small{
+  font-size: xx-small;
+}
 </style>

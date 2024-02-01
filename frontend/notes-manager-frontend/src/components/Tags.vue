@@ -2,6 +2,7 @@
 
   <section>
     <div class="jumbotron mb-0 p-5">
+
       <h4>Tags</h4>
 
       <vue-form :state="formState" @submit.prevent="saveTag()">
@@ -30,18 +31,20 @@
                 {{ tag.name }}
               </div>
               <div class="card-header">
-                <button class="btn btn-danger mr-1 p-1" @click="deleteTag(tag)">Delete</button>
+                <button class="btn btn-danger btn-small mr-1 p-1" @click="deleteTag(tag)">Delete</button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div v-if="showError" class="card-group mt-2">
         <div class="row justify-content-start">
           <div class="card-body text-danger py-1 pl-4 pr-1">{{ errorMessage }}</div>
           <button class="btn btn-outline-danger px-1" @click="closeWindow()">Close</button>
         </div>
       </div>
+
     </div>
   </section>
 
@@ -140,14 +143,12 @@
         else return false
       },
     },
-    computed: {
-
-    }
 }
-
 
 </script>
 
 <style scoped lang="css">
-
+.btn-small{
+  font-size: small;
+}
 </style>
