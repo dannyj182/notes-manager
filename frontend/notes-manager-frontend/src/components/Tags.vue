@@ -27,11 +27,13 @@
         <div class="card-group">
           <div v-for="(tag, index) in tags" :key="index">
             <div class="card bg-light mt-1 mr-1" style="max-width: 18rem;">
-              <div class="card-header">
-                {{ tag.name }}
-              </div>
-              <div class="card-header">
-                <button class="btn btn-danger btn-small mr-1 p-1" @click="deleteTag(tag)">Delete</button>
+              <div class="card-header p-1">
+                <div class="d-flex justify-content-between">
+                  <div>{{ tag.name }}</div>
+                  <div>
+                    <button class="btn btn-danger btn-small ml-1 py-0 px-1" @click="deleteTag(tag)">X</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -41,7 +43,7 @@
       <div v-if="showError" class="card-group mt-2">
         <div class="row justify-content-start">
           <div class="card-body text-danger py-1 pl-4 pr-1">{{ errorMessage }}</div>
-          <button class="btn btn-outline-danger px-1" @click="closeWindow()">Close</button>
+          <button class="btn btn-outline-danger py-0 px-1" @click="closeWindow()">Close</button>
         </div>
       </div>
 
@@ -149,6 +151,6 @@
 
 <style scoped lang="css">
 .btn-small{
-  font-size: small;
+  font-size: xx-small;
 }
 </style>

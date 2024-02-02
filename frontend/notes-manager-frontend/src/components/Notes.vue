@@ -3,61 +3,81 @@
   <section>
     <div>
       <div class="jumbotron mb-0 p-5">
+
         <div v-if="!editMode">
-          <h4>{{ this.lastStatus | title }}</h4>
-          <div class="d-flex justify-content-start mb-1">
-            <div class="d-flex justify-content-between">
-              <button type="button" class="btn btn-secondary mr-1 p-1" @click="addNote()">Add</button>
-              <button type="button" class="btn btn-primary mr-1 p-1" @click="setLastStatus('active')">Home</button>
-              <button type="button" class="btn btn-success mr-1 p-1" @click="setLastStatus('archived')">Archive</button>
-              <button type="button" class="btn btn-warning mr-1 p-1" @click="setLastStatus('deleted')">Trash</button>
-            </div>
-          </div>
+
           <div>
-            <h4>Tags</h4>
-            <div class="d-flex justify-content-start">
-              <button v-for="(tag, index) in tags" :key="index" type="button" class="btn btn-info mr-1 my-1 p-1" @click="filterByTagName(tag.name)">{{ tag.name }}</button>
+
+            <div>
+              <h4>{{ this.lastStatus | title }}</h4>
+              <div class="d-flex justify-content-start mb-1">
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary mr-1 p-1" @click="addNote()">Add</button>
+                  <button type="button" class="btn btn-primary mr-1 p-1" @click="setLastStatus('active')">Home</button>
+                  <button type="button" class="btn btn-success mr-1 p-1" @click="setLastStatus('archived')">Archive</button>
+                  <button type="button" class="btn btn-warning mr-1 p-1" @click="setLastStatus('deleted')">Trash</button>
+                </div>
+              </div>
             </div>
+            
+            <div>
+              <h4>Tags</h4>
+              <div class="d-flex justify-content-start">
+                <button v-for="(tag, index) in tags" :key="index" 
+                type="button" class="btn btn-info mr-1 my-1 p-1" @click="filterByTagName(tag.name)">{{ tag.name }}
+                </button>
+              </div>
+            </div>
+
           </div>
-          <div v-if="filteredNotes.length">
-            <div class="card-group">
-              <div v-for="(note, index) in filteredNotes" :key="index">
-                <div class="card bg-light mt-1 mr-1" style="max-width: 18rem;">
-                  <div class="card-header">
-                    <div class="row justify-content-center">
-                      <button v-show="lastStatus != 'active'" class="btn btn-primary mr-1 p-1" @click="updateStatus(note, 'active')">Activate</button>
-                      <button v-show="lastStatus != 'archived'" class="btn btn-success mr-1 p-1" @click="updateStatus(note, 'archived')">Archive</button>
-                      <button v-show="lastStatus != 'deleted'" class="btn btn-warning mr-1 p-1" @click="updateStatus(note, 'deleted')">Delete</button>
-                      <button v-show="lastStatus == 'deleted'" class="btn btn-danger mr-1 p-1" @click="deleteNote(note)">Delete</button>
-                    </div>
-                  </div>
-                  <div class="card-header" @click="editNote(note)">
-                    <div class="row justify-content-start">
-                      <div class="ml-1">{{ note.title }}</div>
-                    </div>
-                  </div>
-                  <div class="card-body" @click="editNote(note)">
-                    <p class="card-text">{{ note.description }}</p>
-                  </div>
-                  <div class="card-body">
-                    <div v-for="(tag, index) in note.tags" :key="index">
-                      <div class="d-flex justify-content-between border border-dark">
-                        <div class="mr-1">{{ tag.name }}</div>
-                        <button class="btn btn-danger btn-small m-0 p-1" @click="deleteTag(note, tag)">X</button>
+
+          <div>
+
+            <div v-if="filteredNotes.length">
+              <div class="card-group">
+                <div class="card-size" v-for="(note, index) in filteredNotes" :key="index">
+                  <div class="card bg-light mt-1 mr-1">
+                    <div class="card-header">
+                      <div class="row justify-content-center">
+                        <button v-show="lastStatus != 'active'" class="btn btn-primary mr-1 p-1" @click="updateStatus(note, 'active')">Activate</button>
+                        <button v-show="lastStatus != 'archived'" class="btn btn-success mr-1 p-1" @click="updateStatus(note, 'archived')">Archive</button>
+                        <button v-show="lastStatus != 'deleted'" class="btn btn-warning mr-1 p-1" @click="updateStatus(note, 'deleted')">Delete</button>
+                        <button v-show="lastStatus == 'deleted'" class="btn btn-danger mr-1 p-1" @click="deleteNote(note)">Delete</button>
                       </div>
                     </div>
-                  </div>
-                  <div class="card-footer" @click="editNote(note)">
-                    <small class="text-muted">Modified: {{ note.modificationDate | dateformat }}</small>
+                    <div class="card-header p-1" @click="editNote(note)">
+                      <div class="text-truncate ml-1">{{ note.title }}</div>
+                    </div>
+                    <div class="card-body p-3" @click="editNote(note)">
+                      <p class="card-text text-wrap">{{ note.description }}</p>
+                    </div>
+                    <div v-if="note.tags.length">
+                      <hr class="m-0">
+                      <div class="card-body d-flex flex-wrap p-1">
+                        <div v-for="(tag, index) in note.tags" :key="index">
+                          <div class="d-inline-flex border border-dark rounded mr-1">
+                            <div class="mr-1 tag">{{ tag.name }}</div>
+                            <button class="btn btn-danger btn-small m-0 p-1" @click="deleteTag(note, tag)">X</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-footer p-1" @click="editNote(note)">
+                      <small class="text-muted">Modified: {{ note.modificationDate | dateformat }}</small>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            <div v-else>
+              <div class="alert alert-dark text-center mt-2 mb-0 d-inline-flex">The notes you add will appear here</div>
+            </div>
+
           </div>
-          <div v-else>
-            <div class="alert alert-dark text-center mt-2 mb-0 d-inline-flex">The notes you add will appear here</div>
-          </div>
+
         </div>
+        
         <div v-else>
           <button type="button" class="btn btn-info mr-1 p-1" @click="back()">Back</button>
           <vue-form :state="formState" @submit.prevent="saveNote()">
@@ -99,6 +119,7 @@
             </div>
           </vue-form>
         </div>
+
       </div>
     </div>
   </section>
@@ -293,5 +314,12 @@
 <style scoped lang="css">
 .btn-small{
   font-size: xx-small;
+}
+.tag{
+  font-size: small;
+}
+.card-size{
+  max-width: 18rem;
+  min-width: 18rem;
 }
 </style>
