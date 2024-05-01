@@ -21,14 +21,14 @@ public class Note {
     private String title;
     private String description;
     @ManyToOne
-    @JoinColumn(name = "user_name")
+    @JoinColumn(name = "username")
     private User user;
     @ManyToOne
-    @JoinColumn(name = "status_id")
+    @JoinColumn(name = "status")
     private Status status;
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime modificationDate;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinTable(name = "note_tag", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "name"))
+    @JoinTable(name = "note_tag", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "tag_name"))
     private List<Tag> tags;
 }
