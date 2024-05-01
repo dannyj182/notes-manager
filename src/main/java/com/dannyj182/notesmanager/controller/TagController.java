@@ -24,8 +24,8 @@ public class TagController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<TagDTO>> findTagByUserName(){
-        return new ResponseEntity<>(service.findTagByUserName(), HttpStatus.OK);
+    public ResponseEntity<List<TagDTO>> findTagByUsername(){
+        return new ResponseEntity<>(service.findTagByUsername(), HttpStatus.OK);
     }
 
     @DeleteMapping("{tagId}")

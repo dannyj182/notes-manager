@@ -37,8 +37,8 @@ public class TagService implements ITagService{
     }
 
     @Override
-    public List<TagDTO> findTagByUserName() {
-        return mapper.toTagsDTO(repository.findAllByUser_UserName(this.getUsername()));
+    public List<TagDTO> findTagByUsername() {
+        return mapper.toTagsDTO(repository.findAllByUser_Username(this.getUsername()));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class TagService implements ITagService{
         Optional<Tag> optionalTag = repository.findById(name);
         if (optionalTag.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         List<Note> noteList = noteRepository.findAllByTagsContains(optionalTag.get());
-        if (noteList.size() > 0) return new ResponseEntity<>(HttpStatus.CONFLICT);
+        if (!noteList.isEmpty()) return new ResponseEntity<>(HttpStatus.CONFLICT);
         repository.deleteById(name);
         return new ResponseEntity<>(HttpStatus.OK);
     }

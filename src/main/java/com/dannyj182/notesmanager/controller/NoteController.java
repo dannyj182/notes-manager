@@ -25,7 +25,7 @@ public class NoteController {
 
     @GetMapping("/")
     public ResponseEntity<List<NoteDTO>> findNotesByUser(){
-        return new ResponseEntity<>(service.findNotesByUserName(), HttpStatus.OK);
+        return new ResponseEntity<>(service.findNotesByUsername(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{noteId}")

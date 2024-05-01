@@ -13,10 +13,12 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @Column(nullable = false, length = 20)
-    private String userName;
+    @Column(length = 20)
+    private String username;
     @Column(nullable = false, length = 200)
     private String password;
+    @Column(nullable = false, length = 20)
     private String name;
-    private String lastName;
+    @Column(nullable = false, length = 20)
+    private String lastname;
 }

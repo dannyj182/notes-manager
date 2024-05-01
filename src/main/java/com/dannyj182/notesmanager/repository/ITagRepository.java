@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ITagRepository extends CrudRepository<Tag, String> {
-    List<Tag> findAllByUser_UserName(String userName);
+    List<Tag> findAllByUser_Username(String username);
 }

@@ -37,14 +37,14 @@ public class NoteService implements INoteService{
     }
 
     @Override
-    public List<NoteDTO> findNotesByUserName() {
-        return mapper.toNotesDTO(repository.findAllByUser_UserName(this.getUsername()));
+    public List<NoteDTO> findNotesByUsername() {
+        return mapper.toNotesDTO(repository.findAllByUser_Username(this.getUsername()));
     }
 
     @Override
     public boolean deleteById(long noteId) {
         Note note = this.getNote(noteId);
-        if (note == null || !note.getUser().getUserName().equals(this.getUsername())) return false;
+        if (note == null || !note.getUser().getUsername().equals(this.getUsername())) return false;
         repository.deleteById(noteId);
         return true;
     }
@@ -52,7 +52,7 @@ public class NoteService implements INoteService{
     @Override
     public NoteDTO editNote(long noteId, NoteDTO noteDTO) {
         Note note = this.getNote(noteId);
-        if (note == null || !note.getUser().getUserName().equals(this.getUsername())) return null;
+        if (note == null || !note.getUser().getUsername().equals(this.getUsername())) return null;
         this.editNote(noteDTO, note);
         return mapper.toNoteDTO(repository.save(note));
     }

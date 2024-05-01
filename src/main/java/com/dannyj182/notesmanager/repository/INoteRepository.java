@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface INoteRepository extends CrudRepository<Note, Long> {
-    List<Note> findAllByUser_UserName(String userName);
+    List<Note> findAllByUser_Username(String username);
     List<Note> findAllByTagsContains(Tag tag);
 }

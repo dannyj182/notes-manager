@@ -19,7 +19,7 @@ public class UserSecurityService implements UserDetailsService {
         User user = repository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found."));
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUserName())
+                .username(user.getUsername())
                 .password(user.getPassword())
                 .build();
     }
