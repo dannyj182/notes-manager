@@ -1,13 +1,8 @@
 package com.dannyj182.notesmanager.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class TagDTO {
     private String name;
 }

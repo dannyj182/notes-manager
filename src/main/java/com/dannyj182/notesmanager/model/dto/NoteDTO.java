@@ -1,13 +1,11 @@
 package com.dannyj182.notesmanager.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.List;
 
-@Getter @Setter
+@Data
 public class NoteDTO {
-
     private long noteId;
     private String title;
     private String description;
