@@ -58,7 +58,7 @@ public class TagService implements ITagService{
     @Override
     public List<Tag> findAllById(List<TagDTO> tagDTOList) {
         List<String> list = List.of(tagDTOList.stream().map(TagDTO::getName).toArray(String[]::new));
-        return (List<Tag>) repository.findAllById(list);
+        return repository.findAllById(list);
     }
 
     private String getUsername(){
