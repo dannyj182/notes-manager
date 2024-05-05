@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class TagService implements ITagService{
     private final INoteRepository noteRepository;
 
     @Override
+    @Transactional
     public TagDTO saveTag(TagDTO tagDTO) {
         User user = this.getUser(this.getUsername());
         if (user == null) return null;
@@ -37,11 +39,13 @@ public class TagService implements ITagService{
     }
 
     @Override
+    @Transactional
     public List<TagDTO> findTagByUsername() {
         return mapper.toTagsDTO(repository.findAllByUser_Username(this.getUsername()));
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> deleteById(String name) {
         Optional<Tag> optionalTag = repository.findById(name);
         if (optionalTag.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);

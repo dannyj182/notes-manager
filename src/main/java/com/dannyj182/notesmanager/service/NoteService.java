@@ -9,6 +9,7 @@ import com.dannyj182.notesmanager.repository.INoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class NoteService implements INoteService{
     private final ITagService tagService;
 
     @Override
+    @Transactional
     public NoteDTO saveNote(NoteDTO noteDTO) {
         User user = this.getUser(this.getUsername());
         if (user == null) return null;
@@ -37,11 +39,13 @@ public class NoteService implements INoteService{
     }
 
     @Override
+    @Transactional
     public List<NoteDTO> findNotesByUsername() {
         return mapper.toNotesDTO(repository.findAllByUser_Username(this.getUsername()));
     }
 
     @Override
+    @Transactional
     public boolean deleteById(long noteId) {
         Note note = this.getNote(noteId);
         if (note == null || !note.getUser().getUsername().equals(this.getUsername())) return false;
@@ -50,6 +54,7 @@ public class NoteService implements INoteService{
     }
 
     @Override
+    @Transactional
     public NoteDTO editNote(long noteId, NoteDTO noteDTO) {
         Note note = this.getNote(noteId);
         if (note == null || !note.getUser().getUsername().equals(this.getUsername())) return null;
