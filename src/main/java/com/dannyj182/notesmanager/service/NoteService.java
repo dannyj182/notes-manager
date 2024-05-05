@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,7 +32,7 @@ public class NoteService implements INoteService{
         Note note = mapper.toNote(noteDTO);
         note.setUser(user);
         note.setStatus(status);
-        note.setModificationDate(LocalDateTime.now());
+        note.setTags(new ArrayList<>());
         return mapper.toNoteDTO(repository.save(note));
     }
 
@@ -77,7 +77,6 @@ public class NoteService implements INoteService{
         if (noteDTO.getTitle() != null) note.setTitle(noteDTO.getTitle());
         if (noteDTO.getDescription() != null) note.setDescription(noteDTO.getDescription());
         this.setStatus(noteDTO, note);
-        note.setModificationDate(LocalDateTime.now());
         if (noteDTO.getTags() != null) note.setTags(tagService.findAllById(noteDTO.getTags()));
     }
 

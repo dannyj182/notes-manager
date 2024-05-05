@@ -10,6 +10,6 @@ public class NoteDTO {
     private String title;
     private String description;
     private String status;
-    private String modificationDate;
+    private String modifiedDate;
     private List<TagDTO> tags;
 }
