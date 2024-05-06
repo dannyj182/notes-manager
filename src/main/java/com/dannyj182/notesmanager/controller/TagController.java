@@ -28,7 +28,7 @@ public class TagController {
         return new ResponseEntity<>(service.findTagByUsername(), HttpStatus.OK);
     }
 
-    @DeleteMapping("{tagId}")
+    @DeleteMapping("/{tagId}")
     public ResponseEntity<?> deleteById(@PathVariable String tagId){
         return service.deleteById(tagId);
     }
