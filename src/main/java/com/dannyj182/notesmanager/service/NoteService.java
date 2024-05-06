@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -36,7 +36,7 @@ public class NoteService implements INoteService{
         Note note = mapper.toNote(noteDTO);
         note.setUser(user);
         note.setStatus(status);
-        note.setTags(new ArrayList<>());
+        this.setTags(noteDTO, note);
         return mapper.toNoteDTO(repository.save(note));
     }
 
@@ -51,7 +51,7 @@ public class NoteService implements INoteService{
     @Transactional
     public boolean deleteById(long noteId) {
         Note note = this.getNote(noteId);
-        if (note == null || !note.getUser().getUsername().equals(this.getUsername())) return false;
+        if (note == null || this.isNotUser(note)) return false;
         repository.deleteById(noteId);
         return true;
     }
@@ -60,13 +60,17 @@ public class NoteService implements INoteService{
     @Transactional
     public NoteDTO editNote(long noteId, NoteDTO noteDTO) {
         Note note = this.getNote(noteId);
-        if (note == null || !note.getUser().getUsername().equals(this.getUsername())) return null;
+        if (note == null || this.isNotUser(note)) return null;
         this.editNote(noteDTO, note);
         return mapper.toNoteDTO(repository.save(note));
     }
 
     private Note getNote(long noteId){
         return repository.findById(noteId).orElse(null);
+    }
+
+    private boolean isNotUser(Note note){
+        return !note.getUser().getUsername().equalsIgnoreCase(this.getUsername());
     }
 
     private String getUsername(){
@@ -85,7 +89,8 @@ public class NoteService implements INoteService{
         if (noteDTO.getTitle() != null) note.setTitle(noteDTO.getTitle());
         if (noteDTO.getDescription() != null) note.setDescription(noteDTO.getDescription());
         this.setStatus(noteDTO, note);
-        if (noteDTO.getTags() != null) note.setTags(tagService.findAllById(noteDTO.getTags()));
+        this.setTags(noteDTO, note);
+        note.setModifiedDate(LocalDateTime.now());
     }
 
     private void setStatus(NoteDTO noteDTO, Note note) {
@@ -95,5 +100,9 @@ public class NoteService implements INoteService{
                 note.setStatus(status);
             }
         }
+    }
+
+    private void setTags(NoteDTO noteDTO, Note note) {
+        if (noteDTO.getTags() != null) note.setTags(tagService.findAllById(noteDTO.getTags()));
     }
 }
