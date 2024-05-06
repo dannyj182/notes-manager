@@ -7,12 +7,14 @@ import com.dannyj182.notesmanager.model.entity.User;
 import com.dannyj182.notesmanager.model.mapper.NoteMapper;
 import com.dannyj182.notesmanager.repository.INoteRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -40,8 +42,9 @@ public class NoteService implements INoteService{
 
     @Override
     @Transactional
-    public List<NoteDTO> findNotesByUsername() {
-        return mapper.toNotesDTO(repository.findAllByUser_Username(this.getUsername()));
+    public Page<Note> findNotesByUsername(int page, int elements) {
+        Pageable pageRequest = PageRequest.of(page, elements);
+        return repository.findAllByUser_Username(this.getUsername(), pageRequest);
     }
 
     @Override

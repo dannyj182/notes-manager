@@ -1,13 +1,13 @@
 package com.dannyj182.notesmanager.controller;
 
 import com.dannyj182.notesmanager.model.dto.NoteDTO;
+import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.service.INoteService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/notes")
@@ -24,8 +24,9 @@ public class NoteController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<NoteDTO>> findNotesByUser(){
-        return new ResponseEntity<>(service.findNotesByUsername(), HttpStatus.OK);
+    public ResponseEntity<Page<Note>> findNotesByUser(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int elements){
+        return new ResponseEntity<>(service.findNotesByUsername(page, elements), HttpStatus.OK);
     }
 
     @DeleteMapping("/{noteId}")
