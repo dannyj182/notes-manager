@@ -1,5 +1,6 @@
 package com.dannyj182.notesmanager.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class Auditable {
 
     @Column(columnDefinition = "DATETIME")
     @CreatedDate
+    @JsonIgnore
     private LocalDateTime createdDate;
 
     @Column(columnDefinition = "DATETIME")

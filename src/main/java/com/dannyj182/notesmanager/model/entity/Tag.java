@@ -1,5 +1,6 @@
 package com.dannyj182.notesmanager.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,6 @@ public class Tag {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "username")
+    @JsonIgnore
     private User user;
 }

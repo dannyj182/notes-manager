@@ -1,9 +1,12 @@
 package com.dannyj182.notesmanager.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
@@ -23,6 +26,7 @@ public class Note extends Auditable{
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "username")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
@@ -30,6 +34,7 @@ public class Note extends Auditable{
     private Status status;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @Fetch(FetchMode.JOIN)
     @JoinTable(name = "note_tag", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "tag_name"))
     private List<Tag> tags;
 }
