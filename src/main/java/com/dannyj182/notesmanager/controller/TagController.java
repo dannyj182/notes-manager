@@ -1,13 +1,13 @@
 package com.dannyj182.notesmanager.controller;
 
 import com.dannyj182.notesmanager.model.dto.TagDTO;
+import com.dannyj182.notesmanager.model.entity.Tag;
 import com.dannyj182.notesmanager.service.ITagService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
@@ -24,8 +24,11 @@ public class TagController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<TagDTO>> findTagByUsername(){
-        return new ResponseEntity<>(service.findTagByUsername(), HttpStatus.OK);
+    public ResponseEntity<Page<Tag>> findTagByUsername(@RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "5") int elements,
+                                                       @RequestParam(defaultValue = "name") String[] sortBy,
+                                                       @RequestParam(defaultValue = "ASC") String sortDirection){
+        return new ResponseEntity<>(service.findTagByUsername(page, elements, sortBy, sortDirection), HttpStatus.OK);
     }
 
     @DeleteMapping("/{tagId}")

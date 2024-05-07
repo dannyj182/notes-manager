@@ -8,6 +8,10 @@ import com.dannyj182.notesmanager.model.mapper.TagMapper;
 import com.dannyj182.notesmanager.repository.INoteRepository;
 import com.dannyj182.notesmanager.repository.ITagRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +44,10 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public List<TagDTO> findTagByUsername() {
-        return mapper.toTagsDTO(repository.findAllByUser_Username(this.getUsername()));
+    public Page<Tag> findTagByUsername(int page, int elements, String[] sortBy, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+        Pageable pageRequest = PageRequest.of(page, elements, sort);
+        return repository.findAllByUser_Username(this.getUsername(), pageRequest);
     }
 
     @Override
