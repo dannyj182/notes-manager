@@ -15,7 +15,7 @@ public class Tag {
     @Column(length = 50)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "username")
     @JsonIgnore
     private User user;

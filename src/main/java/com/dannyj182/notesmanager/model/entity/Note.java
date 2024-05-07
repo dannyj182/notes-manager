@@ -24,7 +24,7 @@ public class Note extends Auditable{
     private String title;
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "username")
     @JsonIgnore
     private User user;
