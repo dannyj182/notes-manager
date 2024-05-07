@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 public interface INoteService {
     NoteDTO saveNote(NoteDTO noteDTO);
-    Page<Note> findNotesByUsername(int page, int elements);
+    Page<Note> findNotesByUsername(int page, int elements, String[] sortBy, String sortDirection);
     boolean deleteById(long noteId);
     NoteDTO editNote(long noteId, NoteDTO noteDTO);
 }

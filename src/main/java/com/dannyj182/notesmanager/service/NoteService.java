@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +43,9 @@ public class NoteService implements INoteService{
 
     @Override
     @Transactional
-    public Page<Note> findNotesByUsername(int page, int elements) {
-        Pageable pageRequest = PageRequest.of(page, elements);
+    public Page<Note> findNotesByUsername(int page, int elements, String[] sortBy, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+        Pageable pageRequest = PageRequest.of(page, elements, sort);
         return repository.findAllByUser_Username(this.getUsername(), pageRequest);
     }
 

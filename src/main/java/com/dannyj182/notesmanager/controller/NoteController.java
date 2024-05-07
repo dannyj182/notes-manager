@@ -25,8 +25,10 @@ public class NoteController {
 
     @GetMapping("/")
     public ResponseEntity<Page<Note>> findNotesByUser(@RequestParam(defaultValue = "0") int page,
-                                                      @RequestParam(defaultValue = "10") int elements){
-        return new ResponseEntity<>(service.findNotesByUsername(page, elements), HttpStatus.OK);
+                                                      @RequestParam(defaultValue = "10") int elements,
+                                                      @RequestParam(defaultValue = "modifiedDate") String[] sortBy,
+                                                      @RequestParam(defaultValue = "DESC") String sortDirection){
+        return new ResponseEntity<>(service.findNotesByUsername(page, elements, sortBy, sortDirection), HttpStatus.OK);
     }
 
     @DeleteMapping("/{noteId}")
