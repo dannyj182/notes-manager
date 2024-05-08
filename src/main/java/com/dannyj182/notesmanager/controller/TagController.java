@@ -33,6 +33,7 @@ public class TagController {
 
     @DeleteMapping("/{tagId}")
     public ResponseEntity<?> deleteById(@PathVariable String tagId){
-        return service.deleteById(tagId);
+        if (service.deleteById(tagId)) return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

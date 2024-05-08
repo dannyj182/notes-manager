@@ -1,19 +1,15 @@
 package com.dannyj182.notesmanager.service;
 
 import com.dannyj182.notesmanager.model.dto.TagDTO;
-import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.model.entity.Tag;
 import com.dannyj182.notesmanager.model.entity.User;
 import com.dannyj182.notesmanager.model.mapper.TagMapper;
-import com.dannyj182.notesmanager.repository.INoteRepository;
 import com.dannyj182.notesmanager.repository.ITagRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +24,6 @@ public class TagService implements ITagService{
     private final ITagRepository repository;
     private final TagMapper mapper;
     private final IUserService userService;
-    private final INoteRepository noteRepository;
 
     @Override
     @Transactional
@@ -50,13 +45,11 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseEntity<?> deleteById(String name) {
-        Optional<Tag> optionalTag = repository.findById(name);
-        if (optionalTag.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        List<Note> noteList = noteRepository.findAllByTagsContains(optionalTag.get());
-        if (!noteList.isEmpty()) return new ResponseEntity<>(HttpStatus.CONFLICT);
-        repository.deleteById(name);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public boolean deleteById(String tagId) {
+        Optional<Tag> optionalTag = repository.findById(tagId);
+        if (optionalTag.isEmpty()) return false;
+        repository.deleteById(tagId);
+        return true;
     }
 
     @Override
