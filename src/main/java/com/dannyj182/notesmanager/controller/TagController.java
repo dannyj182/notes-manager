@@ -16,19 +16,19 @@ public class TagController {
 
     private final ITagService service;
 
-    @PostMapping("/")
-    public ResponseEntity<TagDTO> saveTag(@RequestBody TagDTO tagDTO){
-        TagDTO tagDTOSaved = service.saveTag(tagDTO);
-        if (tagDTOSaved != null) return new ResponseEntity<>(tagDTOSaved, HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
     @GetMapping("/")
     public ResponseEntity<Page<Tag>> findTagByUsername(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "5") int elements,
                                                        @RequestParam(defaultValue = "name") String[] sortBy,
                                                        @RequestParam(defaultValue = "ASC") String sortDirection){
         return new ResponseEntity<>(service.findTagByUsername(page, elements, sortBy, sortDirection), HttpStatus.OK);
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<TagDTO> saveTag(@RequestBody TagDTO tagDTO){
+        TagDTO tagDTOSaved = service.saveTag(tagDTO);
+        if (tagDTOSaved != null) return new ResponseEntity<>(tagDTOSaved, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/{tagId}")

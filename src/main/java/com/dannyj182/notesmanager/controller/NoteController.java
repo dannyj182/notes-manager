@@ -16,13 +16,6 @@ public class NoteController {
 
     private final INoteService service;
 
-    @PostMapping("/")
-    public ResponseEntity<NoteDTO> saveNote(@RequestBody NoteDTO noteDTO){
-        NoteDTO noteDTOSaved = service.saveNote(noteDTO);
-        if (noteDTOSaved != null) return new ResponseEntity<>(noteDTOSaved, HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
     @GetMapping("/")
     public ResponseEntity<Page<Note>> findNotesByUser(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int elements,
@@ -31,16 +24,23 @@ public class NoteController {
         return new ResponseEntity<>(service.findNotesByUsername(page, elements, sortBy, sortDirection), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{noteId}")
-    public ResponseEntity<?> deleteById(@PathVariable long noteId){
-        if (service.deleteById(noteId)) return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @PostMapping("/")
+    public ResponseEntity<NoteDTO> saveNote(@RequestBody NoteDTO noteDTO){
+        NoteDTO noteDTOSaved = service.saveNote(noteDTO);
+        if (noteDTOSaved != null) return new ResponseEntity<>(noteDTOSaved, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/{noteId}")
     public ResponseEntity<NoteDTO> editNote(@PathVariable long noteId, @RequestBody NoteDTO noteDTO){
         NoteDTO noteDTOEdited = service.editNote(noteId, noteDTO);
         if (noteDTOEdited != null) return new ResponseEntity<>(noteDTOEdited, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/{noteId}")
+    public ResponseEntity<?> deleteById(@PathVariable long noteId){
+        if (service.deleteById(noteId)) return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
