@@ -34,9 +34,7 @@ public class TagService implements ITagService{
     @Transactional
     public TagDTO saveTag(TagDTO tagDTO) {
         User user = this.getUser(this.getUsername());
-        if (user == null) return null;
         if (tagDTO.getName().isEmpty() || tagDTO.getName().isBlank()) return null;
-        if (repository.existsById(tagDTO.getName())) return null;
         Tag tag = mapper.toTag(tagDTO);
         tag.setUser(user);
         return mapper.toTagDTO(repository.save(tag));

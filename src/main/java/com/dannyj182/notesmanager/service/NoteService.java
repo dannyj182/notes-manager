@@ -31,7 +31,6 @@ public class NoteService implements INoteService{
     @Transactional
     public NoteDTO saveNote(NoteDTO noteDTO) {
         User user = this.getUser(this.getUsername());
-        if (user == null) return null;
         Status status = this.getStatus(noteDTO.getStatus());
         if (status == null) return null;
         Note note = mapper.toNote(noteDTO);
