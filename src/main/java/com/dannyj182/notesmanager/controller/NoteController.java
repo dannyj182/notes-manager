@@ -20,7 +20,7 @@ public class NoteController {
     public ResponseEntity<NoteDTO> saveNote(@RequestBody NoteDTO noteDTO){
         NoteDTO noteDTOSaved = service.saveNote(noteDTO);
         if (noteDTOSaved != null) return new ResponseEntity<>(noteDTOSaved, HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/")

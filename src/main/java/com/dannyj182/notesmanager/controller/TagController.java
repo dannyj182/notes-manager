@@ -19,8 +19,8 @@ public class TagController {
     @PostMapping("/")
     public ResponseEntity<TagDTO> saveTag(@RequestBody TagDTO tagDTO){
         TagDTO tagDTOSaved = service.saveTag(tagDTO);
-        if (tagDTOSaved != null) return new ResponseEntity<>(tagDTOSaved, HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        if (tagDTOSaved != null) return new ResponseEntity<>(tagDTOSaved, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/")
