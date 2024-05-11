@@ -2,10 +2,8 @@ package com.dannyj182.notesmanager.controller;
 
 import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.model.dto.TagDTO;
-import com.dannyj182.notesmanager.model.entity.Tag;
 import com.dannyj182.notesmanager.service.ITagService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +16,12 @@ public class TagController {
     private final ITagService service;
 
     @GetMapping("/")
-    public ResponseEntity<Page<Tag>> findTagByUsername(@RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "5") int elements,
-                                                       @RequestParam(defaultValue = "name") String[] sortBy,
-                                                       @RequestParam(defaultValue = "ASC") String sortDirection){
-        return new ResponseEntity<>(service.findTagByUsername(page, elements, sortBy, sortDirection), HttpStatus.OK);
+    public ResponseEntity<Object> findTagsByUsername(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "5") int elements,
+                                                     @RequestParam(defaultValue = "name") String[] sortBy,
+                                                     @RequestParam(defaultValue = "ASC") String sortDirection){
+        ResponseDTO res = service.findTagsByUsername(page, elements, sortBy, sortDirection);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
     @PostMapping("/")

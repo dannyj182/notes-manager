@@ -7,7 +7,6 @@ import com.dannyj182.notesmanager.model.entity.User;
 import com.dannyj182.notesmanager.model.mapper.TagMapper;
 import com.dannyj182.notesmanager.repository.ITagRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +40,19 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public Page<Tag> findTagByUsername(int page, int elements, String[] sortBy, String sortDirection) {
+    public ResponseDTO findTagsByUsername(int page, int elements, String[] sortBy, String sortDirection) {
+
+        if (checkSortDirection(sortDirection)) {
+            return new ResponseDTO("Check Request Param (sortDirection)", HttpStatus.BAD_REQUEST);
+        }
+
+        if (checkSortBy(sortBy)) {
+            return new ResponseDTO("Check Request Param (sortBy)", HttpStatus.BAD_REQUEST);
+        }
+
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageRequest = PageRequest.of(page, elements, sort);
-        return repository.findAllByUser_Username(this.getUsername(), pageRequest);
+        return new ResponseDTO(repository.findAllByUser_Username(getUsername(), pageRequest), HttpStatus.OK);
     }
 
     @Override
@@ -100,5 +110,17 @@ public class TagService implements ITagService{
     @Override
     public boolean checkTagsForNullTagId(List<TagDTO> tags) {
         return tags.stream().anyMatch(tag -> tag.getTagId() == null);
+    }
+
+    private boolean checkSortDirection(String sortDirection){
+        return !Arrays.toString(Sort.Direction.values()).contains(sortDirection);
+    }
+
+    private boolean checkSortBy(String[] sortBy){
+        Class<?> tagClass = Tag.class;
+        Field[] fields = tagClass.getDeclaredFields();
+        return !Arrays.stream(sortBy)
+                .allMatch(sort -> Arrays.stream(fields)
+                        .anyMatch(field -> field.getName().equals(sort)));
     }
 }
