@@ -96,4 +96,9 @@ public class TagService implements ITagService{
     private Tag getTag(Long tagId){
         return repository.findById(tagId).orElse(null);
     }
+
+    @Override
+    public boolean checkTagsForNullTagId(List<TagDTO> tags) {
+        return tags.stream().anyMatch(tag -> tag.getTagId() == null);
+    }
 }

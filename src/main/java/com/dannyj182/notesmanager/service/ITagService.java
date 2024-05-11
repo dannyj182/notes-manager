@@ -13,4 +13,5 @@ public interface ITagService {
     boolean deleteById(Long tagId);
     List<Tag> findAllById(List<TagDTO> tagDTOList);
     ResponseDTO editTag(Long tagId, TagDTO tagDTO);
+    boolean checkTagsForNullTagId(List<TagDTO> tags);
 }
