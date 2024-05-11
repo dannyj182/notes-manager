@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ITagRepository extends JpaRepository<Tag, Long> {
     Page<Tag> findAllByUser_Username(String username, Pageable pageable);
+    boolean existsByName(String name);
 }

@@ -1,5 +1,6 @@
 package com.dannyj182.notesmanager.controller;
 
+import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.model.dto.TagDTO;
 import com.dannyj182.notesmanager.model.entity.Tag;
 import com.dannyj182.notesmanager.service.ITagService;
@@ -29,6 +30,13 @@ public class TagController {
         TagDTO tagDTOSaved = service.saveTag(tagDTO);
         if (tagDTOSaved != null) return new ResponseEntity<>(tagDTOSaved, HttpStatus.CREATED);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/{tagId}")
+    public ResponseEntity<Object> editTag(@PathVariable Long tagId, @RequestBody TagDTO tagDTO){
+        ResponseDTO res = service.editTag(tagId, tagDTO);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
+
     }
 
     @DeleteMapping("/{tagId}")
