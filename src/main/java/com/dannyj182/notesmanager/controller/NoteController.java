@@ -1,6 +1,7 @@
 package com.dannyj182.notesmanager.controller;
 
 import com.dannyj182.notesmanager.model.dto.NoteDTO;
+import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.service.INoteService;
 import lombok.AllArgsConstructor;
@@ -25,10 +26,9 @@ public class NoteController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<NoteDTO> saveNote(@RequestBody NoteDTO noteDTO){
-        NoteDTO noteDTOSaved = service.saveNote(noteDTO);
-        if (noteDTOSaved != null) return new ResponseEntity<>(noteDTOSaved, HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> saveNote(@RequestBody NoteDTO noteDTO){
+        ResponseDTO res = service.saveNote(noteDTO);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
     @PutMapping("/{noteId}")

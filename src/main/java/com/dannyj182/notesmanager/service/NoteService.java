@@ -1,6 +1,7 @@
 package com.dannyj182.notesmanager.service;
 
 import com.dannyj182.notesmanager.model.dto.NoteDTO;
+import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.model.entity.Status;
 import com.dannyj182.notesmanager.model.entity.User;
@@ -11,11 +12,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor
@@ -29,15 +32,32 @@ public class NoteService implements INoteService{
 
     @Override
     @Transactional
-    public NoteDTO saveNote(NoteDTO noteDTO) {
+    public ResponseDTO saveNote(NoteDTO noteDTO) {
+
+        if (noteDTO.getStatus() == null) {
+            return new ResponseDTO("Check Request Body (Status)", HttpStatus.BAD_REQUEST);
+        }
+
+        if (this.checkTags(noteDTO)) {
+            return new ResponseDTO("Check Request Body (Tags)", HttpStatus.BAD_REQUEST);
+        }
+
         User user = this.getUser(this.getUsername());
+        if (user == null) {
+            return new ResponseDTO(null, HttpStatus.FORBIDDEN);
+        }
+
         Status status = this.getStatus(noteDTO.getStatus());
-        if (status == null) return null;
+        if (status == null) {
+            return new ResponseDTO("Status not found", HttpStatus.NOT_FOUND);
+        }
+
         Note note = mapper.toNote(noteDTO);
         note.setUser(user);
         note.setStatus(status);
         this.setTags(noteDTO, note);
-        return mapper.toNoteDTO(repository.save(note));
+
+        return new ResponseDTO(mapper.toNoteDTO(repository.save(note)), HttpStatus.OK);
     }
 
     @Override
@@ -105,5 +125,11 @@ public class NoteService implements INoteService{
 
     private void setTags(NoteDTO noteDTO, Note note) {
         if (noteDTO.getTags() != null) note.setTags(tagService.findAllById(noteDTO.getTags()));
+        else note.setTags(new ArrayList<>());
+    }
+
+    private boolean checkTags(NoteDTO noteDTO){
+        if (noteDTO.getTags() == null) return false;
+        else return tagService.checkTagsForNullTagId(noteDTO.getTags());
     }
 }
