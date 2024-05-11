@@ -40,7 +40,15 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseDTO findTagsByUsername(int page, int elements, String[] sortBy, String sortDirection) {
+    public ResponseDTO findTagsByUsername(int pageNumber, int pageSize, String[] sortBy, String sortDirection) {
+
+        if (pageNumber < 0 ) {
+            return new ResponseDTO("Page number must not be less than zero", HttpStatus.BAD_REQUEST);
+        }
+
+        if (pageSize <= 0 ) {
+            return new ResponseDTO("Page size must not be less than one", HttpStatus.BAD_REQUEST);
+        }
 
         if (checkSortDirection(sortDirection)) {
             return new ResponseDTO("Check Request Param (sortDirection)", HttpStatus.BAD_REQUEST);
@@ -51,7 +59,8 @@ public class TagService implements ITagService{
         }
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
-        Pageable pageRequest = PageRequest.of(page, elements, sort);
+        Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
         return new ResponseDTO(repository.findAllByUser_Username(getUsername(), pageRequest), HttpStatus.OK);
     }
 

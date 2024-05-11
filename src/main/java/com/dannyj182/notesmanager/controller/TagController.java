@@ -16,11 +16,11 @@ public class TagController {
     private final ITagService service;
 
     @GetMapping("/")
-    public ResponseEntity<Object> findTagsByUsername(@RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "5") int elements,
+    public ResponseEntity<Object> findTagsByUsername(@RequestParam(defaultValue = "0") int pageNumber,
+                                                     @RequestParam(defaultValue = "5") int pageSize,
                                                      @RequestParam(defaultValue = "name") String[] sortBy,
                                                      @RequestParam(defaultValue = "ASC") String sortDirection){
-        ResponseDTO res = service.findTagsByUsername(page, elements, sortBy, sortDirection);
+        ResponseDTO res = service.findTagsByUsername(pageNumber, pageSize, sortBy, sortDirection);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
