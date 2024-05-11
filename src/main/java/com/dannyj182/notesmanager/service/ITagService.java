@@ -9,6 +9,6 @@ import java.util.List;
 public interface ITagService {
     TagDTO saveTag(TagDTO tagDTO);
     Page<Tag> findTagByUsername(int page, int elements, String[] sortBy, String sortDirection);
-    boolean deleteById(String tagId);
+    boolean deleteById(Long tagId);
     List<Tag> findAllById(List<TagDTO> tagDTOList);
 }

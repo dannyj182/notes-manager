@@ -32,7 +32,7 @@ public class TagController {
     }
 
     @DeleteMapping("/{tagId}")
-    public ResponseEntity<?> deleteById(@PathVariable String tagId){
+    public ResponseEntity<?> deleteById(@PathVariable Long tagId){
         if (service.deleteById(tagId)) return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

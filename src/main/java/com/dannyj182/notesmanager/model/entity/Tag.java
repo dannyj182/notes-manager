@@ -12,7 +12,10 @@ import lombok.Setter;
 public class Tag {
 
     @Id
-    @Column(length = 50)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private Long tagId;
+
+    @Column(unique = true, nullable = false, length = 50)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -45,7 +45,7 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public boolean deleteById(String tagId) {
+    public boolean deleteById(Long tagId) {
         Optional<Tag> optionalTag = repository.findById(tagId);
         if (optionalTag.isEmpty()) return false;
         repository.deleteById(tagId);
@@ -54,7 +54,7 @@ public class TagService implements ITagService{
 
     @Override
     public List<Tag> findAllById(List<TagDTO> tagDTOList) {
-        List<String> list = List.of(tagDTOList.stream().map(TagDTO::getName).toArray(String[]::new));
+        List<Long> list = List.of(tagDTOList.stream().map(TagDTO::getTagId).toArray(Long[]::new));
         return repository.findAllById(list);
     }
 
