@@ -69,7 +69,7 @@ public class NoteService implements INoteService{
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        return new ResponseDTO(repository.findAllByUser_Username(getUser().getUsername(), pageRequest), HttpStatus.OK);
+        return new ResponseDTO(repository.findAllByUser(getUser(), pageRequest), HttpStatus.OK);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.dannyj182.notesmanager.repository;
 
 import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.model.entity.Tag;
+import com.dannyj182.notesmanager.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface INoteRepository extends JpaRepository<Note, Long> {
-    Page<Note> findAllByUser_Username(String username, Pageable pageable);
+    Page<Note> findAllByUser(User user, Pageable pageable);
     List<Note> findAllByTagsContains(Tag tag);
 }
