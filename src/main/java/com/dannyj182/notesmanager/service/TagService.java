@@ -6,6 +6,7 @@ import com.dannyj182.notesmanager.model.entity.Tag;
 import com.dannyj182.notesmanager.model.entity.User;
 import com.dannyj182.notesmanager.model.mapper.TagMapper;
 import com.dannyj182.notesmanager.repository.ITagRepository;
+import com.dannyj182.notesmanager.utils.Validator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,23 +39,10 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseDTO findTagsByUsername(int pageNumber, int pageSize, String[] sortBy, String sortDirection) {
+    public ResponseDTO findTagsByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection) {
 
-        if (pageNumber < 0 ) {
-            return new ResponseDTO("Page number must not be less than zero", HttpStatus.BAD_REQUEST);
-        }
-
-        if (pageSize <= 0 ) {
-            return new ResponseDTO("Page size must not be less than one", HttpStatus.BAD_REQUEST);
-        }
-
-        if (checkSortDirection(sortDirection)) {
-            return new ResponseDTO("Check Request Param (sortDirection)", HttpStatus.BAD_REQUEST);
-        }
-
-        if (checkSortBy(sortBy)) {
-            return new ResponseDTO("Check Request Param (sortBy)", HttpStatus.BAD_REQUEST);
-        }
+        ResponseDTO res = Validator.ValidateParams(pageNumber, pageSize, sortBy, sortDirection, Tag.class);
+        if (res != null) return res;
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
@@ -119,17 +105,5 @@ public class TagService implements ITagService{
     @Override
     public boolean checkTagsForNullTagId(List<TagDTO> tags) {
         return tags.stream().anyMatch(tag -> tag.getTagId() == null);
-    }
-
-    private boolean checkSortDirection(String sortDirection){
-        return !Arrays.toString(Sort.Direction.values()).contains(sortDirection);
-    }
-
-    private boolean checkSortBy(String[] sortBy){
-        Class<?> tagClass = Tag.class;
-        Field[] fields = tagClass.getDeclaredFields();
-        return !Arrays.stream(sortBy)
-                .allMatch(sort -> Arrays.stream(fields)
-                        .anyMatch(field -> field.getName().equals(sort)));
     }
 }

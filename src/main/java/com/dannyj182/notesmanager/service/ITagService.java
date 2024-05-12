@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ITagService {
     TagDTO saveTag(TagDTO tagDTO);
-    ResponseDTO findTagsByUsername(int pageNumber, int pageSize, String[] sortBy, String sortDirection);
+    ResponseDTO findTagsByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
     boolean deleteById(Long tagId);
     List<Tag> findAllById(List<TagDTO> tagDTOList);
     ResponseDTO editTag(Long tagId, TagDTO tagDTO);
