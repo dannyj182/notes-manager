@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,7 @@ public class TagService implements ITagService{
     @Override
     @Transactional
     public TagDTO saveTag(TagDTO tagDTO) {
-        User user = this.getUser(this.getUsername());
+        User user = getUser();
         if (tagDTO.getName().isEmpty() || tagDTO.getName().isBlank()) return null;
         Tag tag = mapper.toTag(tagDTO);
         tag.setUser(user);
@@ -47,7 +46,7 @@ public class TagService implements ITagService{
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        return new ResponseDTO(repository.findAllByUser_Username(getUsername(), pageRequest), HttpStatus.OK);
+        return new ResponseDTO(repository.findAllByUser_Username(getUser().getUsername(), pageRequest), HttpStatus.OK);
     }
 
     @Override
@@ -90,12 +89,8 @@ public class TagService implements ITagService{
         return repository.existsByName(name);
     }
 
-    private String getUsername(){
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    }
-
-    private User getUser(String userName){
-        return userService.findById(userName);
+    private User getUser(){
+        return userService.findByUsername();
     }
 
     private Tag getTag(Long tagId){

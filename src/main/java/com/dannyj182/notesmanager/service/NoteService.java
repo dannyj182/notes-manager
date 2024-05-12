@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +41,7 @@ public class NoteService implements INoteService{
             return new ResponseDTO("Check Request Body (Tags)", HttpStatus.BAD_REQUEST);
         }
 
-        User user = this.getUser(this.getUsername());
+        User user = getUser();
         if (user == null) {
             return new ResponseDTO(null, HttpStatus.FORBIDDEN);
         }
@@ -70,7 +69,7 @@ public class NoteService implements INoteService{
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        return new ResponseDTO(repository.findAllByUser_Username(getUsername(), pageRequest), HttpStatus.OK);
+        return new ResponseDTO(repository.findAllByUser_Username(getUser().getUsername(), pageRequest), HttpStatus.OK);
     }
 
     @Override
@@ -96,15 +95,11 @@ public class NoteService implements INoteService{
     }
 
     private boolean isNotUser(Note note){
-        return !note.getUser().getUsername().equalsIgnoreCase(this.getUsername());
+        return !note.getUser().getUsername().equalsIgnoreCase(getUser().getUsername());
     }
 
-    private String getUsername(){
-        return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-    }
-
-    private User getUser(String userName){
-        return userService.findById(userName);
+    private User getUser(){
+        return userService.findByUsername();
     }
 
     private Status getStatus(String status){
