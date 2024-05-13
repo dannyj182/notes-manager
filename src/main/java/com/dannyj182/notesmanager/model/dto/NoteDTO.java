@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class NoteDTO {
-    private long noteId;
+    private Long noteId;
     private String title;
     private String description;
     private String status;
