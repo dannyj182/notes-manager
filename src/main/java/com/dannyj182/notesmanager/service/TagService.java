@@ -27,20 +27,6 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseDTO saveTag(TagDTO tagDTO) {
-
-        ResponseDTO res = ValidateTagDTO(tagDTO);
-        if (res != null) return res;
-
-        Tag tag = mapper.toTag(tagDTO);
-        User user = getUser();
-        tag.setUser(user);
-
-        return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.CREATED);
-    }
-
-    @Override
-    @Transactional
     public ResponseDTO findTagsByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection) {
 
         ResponseDTO res = Validator.ValidateParams(pageNumber, pageSize, sortBy, sortDirection, Tag.class);
@@ -54,23 +40,16 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseDTO deleteById(Long tagId) {
+    public ResponseDTO saveTag(TagDTO tagDTO) {
 
-        Tag tag = getTag(tagId);
+        ResponseDTO res = ValidateTagDTO(tagDTO);
+        if (res != null) return res;
 
-        if (tag == null) {
-            return new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND);
-        }
+        Tag tag = mapper.toTag(tagDTO);
+        User user = getUser();
+        tag.setUser(user);
 
-        repository.deleteById(tagId);
-
-        return new ResponseDTO("Tag successfully deleted", HttpStatus.OK);
-    }
-
-    @Override
-    public List<Tag> findAllById(List<TagDTO> tagDTOList) {
-        List<Long> list = List.of(tagDTOList.stream().map(TagDTO::getTagId).toArray(Long[]::new));
-        return repository.findAllById(list);
+        return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.CREATED);
     }
 
     @Override
@@ -91,30 +70,43 @@ public class TagService implements ITagService{
         return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.OK);
     }
 
-    private ResponseDTO ValidateTagDTO(TagDTO tagDTO) {
-        if (checkTagDTO(tagDTO)) {
-            return new ResponseDTO("Check Request Body", HttpStatus.BAD_REQUEST);
-        }
-        if (existsByName(tagDTO.getName())) {
-            return new ResponseDTO("Name already exists", HttpStatus.CONFLICT);
-        }
-        return null;
-    }
+    @Override
+    @Transactional
+    public ResponseDTO deleteById(Long tagId) {
 
-    private boolean checkTagDTO(TagDTO tagDTO) {
-        return tagDTO == null || tagDTO.getName() == null || tagDTO.getName().isEmpty() || tagDTO.getName().isBlank();
-    }
+        Tag tag = getTag(tagId);
 
-    private boolean existsByName(String name) {
-        return repository.existsByName(name);
+        if (tag == null) {
+            return new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND);
+        }
+
+        repository.deleteById(tagId);
+
+        return new ResponseDTO("Tag successfully deleted", HttpStatus.OK);
     }
 
     private User getUser(){
         return userService.findByUsername();
     }
 
+    private ResponseDTO ValidateTagDTO(TagDTO tagDTO) {
+        if (tagDTO == null || tagDTO.getName() == null || tagDTO.getName().isEmpty() || tagDTO.getName().isBlank()) {
+            return new ResponseDTO("Check Request Body", HttpStatus.BAD_REQUEST);
+        }
+        if (repository.existsByName(tagDTO.getName())) {
+            return new ResponseDTO("Name already exists", HttpStatus.CONFLICT);
+        }
+        return null;
+    }
+
     private Tag getTag(Long tagId){
         return repository.findById(tagId).orElse(null);
+    }
+
+    @Override
+    public List<Tag> findAllById(List<TagDTO> tagDTOList) {
+        List<Long> list = List.of(tagDTOList.stream().map(TagDTO::getTagId).toArray(Long[]::new));
+        return repository.findAllById(list);
     }
 
     @Override
