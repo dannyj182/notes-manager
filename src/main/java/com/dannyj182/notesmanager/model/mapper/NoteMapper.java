@@ -13,12 +13,4 @@ public interface NoteMapper {
             @Mapping(source = "status.status", target = "status")
     })
     NoteDTO toNoteDTO(Note note);
-
-    @Mappings({
-            @Mapping(target = "user", ignore = true),
-            @Mapping(target = "status", ignore = true),
-            @Mapping(target = "createdDate", ignore = true),
-            @Mapping(target = "modifiedDate", ignore = true)
-    })
-    Note toNote(NoteDTO noteDTO);
 }

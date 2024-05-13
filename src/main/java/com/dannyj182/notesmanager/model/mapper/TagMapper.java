@@ -10,11 +10,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TagMapper {
+
     TagDTO toTagDTO(Tag tag);
 
     List<TagDTO> toTagsDTO(List<Tag> tags);
-
-    List<Tag> toTags(List<TagDTO> tagDTOList);
 
     @Mappings({
             @Mapping(target = "user", ignore = true),
