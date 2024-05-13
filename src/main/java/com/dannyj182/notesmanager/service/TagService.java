@@ -28,12 +28,16 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public TagDTO saveTag(TagDTO tagDTO) {
-        User user = getUser();
-        if (tagDTO.getName().isEmpty() || tagDTO.getName().isBlank()) return null;
+    public ResponseDTO saveTag(TagDTO tagDTO) {
+
+        ResponseDTO res = ValidateTagDTO(tagDTO);
+        if (res != null) return res;
+
         Tag tag = mapper.toTag(tagDTO);
+        User user = getUser();
         tag.setUser(user);
-        return mapper.toTagDTO(repository.save(tag));
+
+        return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.CREATED);
     }
 
     @Override
@@ -79,6 +83,16 @@ public class TagService implements ITagService{
         }
         tag.setName(tagDTO.getName());
         return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.OK);
+    }
+
+    private ResponseDTO ValidateTagDTO(TagDTO tagDTO) {
+        if (checkTagDTO(tagDTO)) {
+            return new ResponseDTO("Check Request Body", HttpStatus.BAD_REQUEST);
+        }
+        if (existsByName(tagDTO.getName())) {
+            return new ResponseDTO("Name already exists", HttpStatus.CONFLICT);
+        }
+        return null;
     }
 
     private boolean checkTagDTO(TagDTO tagDTO) {

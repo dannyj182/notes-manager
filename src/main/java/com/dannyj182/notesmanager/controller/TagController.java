@@ -25,10 +25,9 @@ public class TagController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<TagDTO> saveTag(@RequestBody TagDTO tagDTO){
-        TagDTO tagDTOSaved = service.saveTag(tagDTO);
-        if (tagDTOSaved != null) return new ResponseEntity<>(tagDTOSaved, HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> saveTag(@RequestBody TagDTO tagDTO){
+        ResponseDTO res = service.saveTag(tagDTO);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
     @PutMapping("/{tagId}")
