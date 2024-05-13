@@ -4,7 +4,6 @@ import com.dannyj182.notesmanager.model.dto.NoteDTO;
 import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.service.INoteService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,10 +30,9 @@ public class NoteController {
     }
 
     @PutMapping("/{noteId}")
-    public ResponseEntity<NoteDTO> editNote(@PathVariable long noteId, @RequestBody NoteDTO noteDTO){
-        NoteDTO noteDTOEdited = service.editNote(noteId, noteDTO);
-        if (noteDTOEdited != null) return new ResponseEntity<>(noteDTOEdited, HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> editNote(@PathVariable Long noteId, @RequestBody NoteDTO noteDTO){
+        ResponseDTO res = service.editNote(noteId, noteDTO);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
     @DeleteMapping("/{noteId}")
