@@ -9,7 +9,7 @@ import java.util.List;
 public interface ITagService {
     ResponseDTO saveTag(TagDTO tagDTO);
     ResponseDTO findTagsByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
-    boolean deleteById(Long tagId);
+    ResponseDTO deleteById(Long tagId);
     List<Tag> findAllById(List<TagDTO> tagDTOList);
     ResponseDTO editTag(Long tagId, TagDTO tagDTO);
     boolean checkTagsForNullTagId(List<TagDTO> tags);

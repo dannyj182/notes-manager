@@ -4,7 +4,6 @@ import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.model.dto.TagDTO;
 import com.dannyj182.notesmanager.service.ITagService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +37,8 @@ public class TagController {
     }
 
     @DeleteMapping("/{tagId}")
-    public ResponseEntity<?> deleteById(@PathVariable Long tagId){
-        if (service.deleteById(tagId)) return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> deleteById(@PathVariable Long tagId){
+        ResponseDTO res = service.deleteById(tagId);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 }

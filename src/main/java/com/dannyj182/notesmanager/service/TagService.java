@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -55,11 +54,17 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public boolean deleteById(Long tagId) {
-        Optional<Tag> optionalTag = repository.findById(tagId);
-        if (optionalTag.isEmpty()) return false;
+    public ResponseDTO deleteById(Long tagId) {
+
+        Tag tag = getTag(tagId);
+
+        if (tag == null) {
+            return new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND);
+        }
+
         repository.deleteById(tagId);
-        return true;
+
+        return new ResponseDTO("Tag successfully deleted", HttpStatus.OK);
     }
 
     @Override
