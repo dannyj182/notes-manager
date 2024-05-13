@@ -56,7 +56,7 @@ public class NoteService implements INoteService{
         note.setStatus(status);
         this.setTags(noteDTO, note);
 
-        return new ResponseDTO(mapper.toNoteDTO(repository.save(note)), HttpStatus.OK);
+        return new ResponseDTO(mapper.toNoteDTO(repository.save(note)), HttpStatus.CREATED);
     }
 
     @Override
