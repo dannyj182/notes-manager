@@ -71,17 +71,18 @@ public class TagService implements ITagService{
     @Override
     @Transactional
     public ResponseDTO editTag(Long tagId, TagDTO tagDTO) {
-        if (this.checkTagDTO(tagDTO)) {
-            return new ResponseDTO("Check Request Body", HttpStatus.BAD_REQUEST);
-        }
-        if (this.existsByName(tagDTO.getName())) {
-            return new ResponseDTO("Name already exists", HttpStatus.CONFLICT);
-        }
-        Tag tag = this.getTag(tagId);
+
+        ResponseDTO res = ValidateTagDTO(tagDTO);
+        if (res != null) return res;
+
+        Tag tag = getTag(tagId);
+
         if (tag == null) {
             return new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND);
         }
+
         tag.setName(tagDTO.getName());
+
         return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.OK);
     }
 
