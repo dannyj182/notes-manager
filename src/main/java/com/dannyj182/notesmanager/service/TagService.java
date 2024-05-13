@@ -2,9 +2,11 @@ package com.dannyj182.notesmanager.service;
 
 import com.dannyj182.notesmanager.model.dto.ResponseDTO;
 import com.dannyj182.notesmanager.model.dto.TagDTO;
+import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.model.entity.Tag;
 import com.dannyj182.notesmanager.model.entity.User;
 import com.dannyj182.notesmanager.model.mapper.TagMapper;
+import com.dannyj182.notesmanager.repository.INoteRepository;
 import com.dannyj182.notesmanager.repository.ITagRepository;
 import com.dannyj182.notesmanager.utils.Validator;
 import lombok.AllArgsConstructor;
@@ -19,11 +21,12 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class TagService implements ITagService{
+public class TagService implements ITagService {
 
     private final ITagRepository repository;
     private final TagMapper mapper;
     private final IUserService userService;
+    private final INoteRepository noteRepository;
 
     @Override
     @Transactional
@@ -72,7 +75,7 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseDTO deleteTag(Long tagId) {
+    public ResponseDTO deleteTag(Long tagId, Boolean forceDelete) {
 
         Tag tag = getTag(tagId);
 
@@ -80,12 +83,22 @@ public class TagService implements ITagService{
             return new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND);
         }
 
-        repository.deleteById(tagId);
+        List<Note> noteList = noteRepository.findAllByTagsContains(tag);
 
+        if (!noteList.isEmpty()) {
+            if (forceDelete) {
+                noteList.forEach(note -> note.getTags().remove(tag));
+                noteRepository.saveAll(noteList);
+            } else {
+                return new ResponseDTO("The tag cannot be deleted, it is associated with one or more notes", HttpStatus.CONFLICT);
+            }
+        }
+
+        repository.deleteById(tagId);
         return new ResponseDTO("Tag successfully deleted", HttpStatus.OK);
     }
 
-    private User getUser(){
+    private User getUser() {
         return userService.findByUsername();
     }
 
@@ -99,7 +112,7 @@ public class TagService implements ITagService{
         return null;
     }
 
-    private Tag getTag(Long tagId){
+    private Tag getTag(Long tagId) {
         return repository.findById(tagId).orElse(null);
     }
 
