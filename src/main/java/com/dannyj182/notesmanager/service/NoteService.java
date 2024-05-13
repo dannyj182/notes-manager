@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 @Service
 @AllArgsConstructor
-public class NoteService implements INoteService{
+public class NoteService implements INoteService {
 
     private final INoteRepository repository;
     private final NoteMapper mapper;
@@ -74,11 +74,20 @@ public class NoteService implements INoteService{
 
     @Override
     @Transactional
-    public boolean deleteById(long noteId) {
-        Note note = this.getNote(noteId);
-        if (note == null || this.isNotUser(note)) return false;
+    public ResponseDTO deleteNote(Long noteId) {
+
+        Note note = getNote(noteId);
+
+        if (note == null) {
+            return new ResponseDTO("Note not found", HttpStatus.NOT_FOUND);
+        }
+
+        if (isNotUser(note)) {
+            return new ResponseDTO("You do not have permission to delete this note", HttpStatus.FORBIDDEN);
+        }
+
         repository.deleteById(noteId);
-        return true;
+        return new ResponseDTO("Note successfully deleted", HttpStatus.OK);
     }
 
     @Override
@@ -90,23 +99,23 @@ public class NoteService implements INoteService{
         return mapper.toNoteDTO(repository.save(note));
     }
 
-    private Note getNote(long noteId){
+    private Note getNote(long noteId) {
         return repository.findById(noteId).orElse(null);
     }
 
-    private boolean isNotUser(Note note){
+    private boolean isNotUser(Note note) {
         return !note.getUser().getUsername().equalsIgnoreCase(getUser().getUsername());
     }
 
-    private User getUser(){
+    private User getUser() {
         return userService.findByUsername();
     }
 
-    private Status getStatus(String status){
+    private Status getStatus(String status) {
         return statusService.findById(status).orElse(null);
     }
 
-    private void editNote(NoteDTO noteDTO, Note note){
+    private void editNote(NoteDTO noteDTO, Note note) {
         if (noteDTO.getTitle() != null) note.setTitle(noteDTO.getTitle());
         if (noteDTO.getDescription() != null) note.setDescription(noteDTO.getDescription());
         this.setStatus(noteDTO, note);
@@ -115,9 +124,9 @@ public class NoteService implements INoteService{
     }
 
     private void setStatus(NoteDTO noteDTO, Note note) {
-        if (noteDTO.getStatus() != null){
+        if (noteDTO.getStatus() != null) {
             Status status = this.getStatus(noteDTO.getStatus());
-            if (status != null && !status.getStatus().equals(note.getStatus().getStatus())){
+            if (status != null && !status.getStatus().equals(note.getStatus().getStatus())) {
                 note.setStatus(status);
             }
         }
@@ -128,7 +137,7 @@ public class NoteService implements INoteService{
         else note.setTags(new ArrayList<>());
     }
 
-    private boolean checkTags(NoteDTO noteDTO){
+    private boolean checkTags(NoteDTO noteDTO) {
         if (noteDTO.getTags() == null) return false;
         else return tagService.checkTagsForNullTagId(noteDTO.getTags());
     }

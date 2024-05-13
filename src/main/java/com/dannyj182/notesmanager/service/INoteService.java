@@ -7,5 +7,5 @@ public interface INoteService {
     ResponseDTO findNotesByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
     ResponseDTO saveNote(NoteDTO noteDTO);
     NoteDTO editNote(long noteId, NoteDTO noteDTO);
-    boolean deleteById(long noteId);
+    ResponseDTO deleteNote(Long noteId);
 }

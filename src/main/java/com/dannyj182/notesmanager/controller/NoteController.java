@@ -38,8 +38,8 @@ public class NoteController {
     }
 
     @DeleteMapping("/{noteId}")
-    public ResponseEntity<?> deleteById(@PathVariable long noteId){
-        if (service.deleteById(noteId)) return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> deleteNote(@PathVariable Long noteId){
+        ResponseDTO res = service.deleteNote(noteId);
+        return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 }
