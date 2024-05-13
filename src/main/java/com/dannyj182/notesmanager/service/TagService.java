@@ -72,7 +72,7 @@ public class TagService implements ITagService{
 
     @Override
     @Transactional
-    public ResponseDTO deleteById(Long tagId) {
+    public ResponseDTO deleteTag(Long tagId) {
 
         Tag tag = getTag(tagId);
 

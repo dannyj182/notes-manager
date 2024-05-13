@@ -37,8 +37,8 @@ public class TagController {
     }
 
     @DeleteMapping("/{tagId}")
-    public ResponseEntity<Object> deleteById(@PathVariable Long tagId){
-        ResponseDTO res = service.deleteById(tagId);
+    public ResponseEntity<Object> deleteTag(@PathVariable Long tagId){
+        ResponseDTO res = service.deleteTag(tagId);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 }
