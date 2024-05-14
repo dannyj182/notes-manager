@@ -14,7 +14,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class User extends Auditable {
 
     @Id
-    @Column(length = 20)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+
+    @Column(unique = true, nullable = false, length = 20)
     private String username;
 
     @Column(nullable = false, length = 200)
