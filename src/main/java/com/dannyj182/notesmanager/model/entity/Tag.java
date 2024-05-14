@@ -20,7 +20,7 @@ public class Tag {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "username")
+    @JoinColumn(nullable = false, name = "user_id")
     @JsonIgnore
     private User user;
 }

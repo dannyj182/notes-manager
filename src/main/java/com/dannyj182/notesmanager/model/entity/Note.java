@@ -26,12 +26,12 @@ public class Note extends Auditable {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "username")
+    @JoinColumn(nullable = false, name = "user_id")
     @JsonIgnore
     private User user;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "status")
+    @JoinColumn(nullable = false, name = "status_id")
     private Status status;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
