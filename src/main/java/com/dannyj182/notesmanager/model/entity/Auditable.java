@@ -11,7 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-@Getter @Setter
+@Getter
+@Setter
 public class Auditable {
 
     @Column(columnDefinition = "DATETIME")
