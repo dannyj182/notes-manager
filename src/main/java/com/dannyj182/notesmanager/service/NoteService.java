@@ -164,8 +164,8 @@ public class NoteService implements INoteService {
         }
     }
 
-    private Status getStatus(String status) {
-        return statusService.findById(status).orElse(null);
+    private Status getStatus(String name) {
+        return statusService.findByName(name).orElse(null);
     }
 
     private ResponseDTO validateAndSetTags(NoteDTO noteDTO, Note note) {

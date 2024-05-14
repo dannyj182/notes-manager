@@ -10,7 +10,7 @@ import org.mapstruct.Mappings;
 public interface NoteMapper {
 
     @Mappings({
-            @Mapping(source = "status.status", target = "status")
+            @Mapping(source = "status.name", target = "status")
     })
     NoteDTO toNoteDTO(Note note);
 }
