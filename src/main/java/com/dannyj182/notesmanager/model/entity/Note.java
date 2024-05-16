@@ -1,5 +1,6 @@
 package com.dannyj182.notesmanager.model.entity;
 
+import com.dannyj182.notesmanager.audit.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
