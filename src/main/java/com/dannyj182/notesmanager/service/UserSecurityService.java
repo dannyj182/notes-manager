@@ -21,6 +21,8 @@ public class UserSecurityService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
+                .accountLocked(user.getLocked())
+                .disabled(user.getDisabled())
                 .build();
     }
 }

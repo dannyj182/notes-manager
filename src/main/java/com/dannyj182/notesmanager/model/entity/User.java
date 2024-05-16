@@ -1,5 +1,6 @@
 package com.dannyj182.notesmanager.model.entity;
 
+import com.dannyj182.notesmanager.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,10 @@ public class User extends Auditable {
 
     @Column(nullable = false, length = 20)
     private String lastname;
+
+    @Column(nullable = false, columnDefinition = "TINYINT")
+    private Boolean locked;
+
+    @Column(nullable = false, columnDefinition = "TINYINT")
+    private Boolean disabled;
 }
