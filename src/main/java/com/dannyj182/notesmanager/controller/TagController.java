@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tags")
 @AllArgsConstructor
@@ -24,8 +26,8 @@ public class TagController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Object> saveTag(@RequestBody TagDTO tagDTO){
-        ResponseDTO res = service.saveTag(tagDTO);
+    public ResponseEntity<Object> saveTags(@RequestBody List<TagDTO> tagDTOList){
+        ResponseDTO res = service.saveTags(tagDTOList);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 

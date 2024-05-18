@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -43,16 +43,28 @@ public class TagService implements ITagService {
 
     @Override
     @Transactional
-    public ResponseDTO saveTag(TagDTO tagDTO) {
+    public ResponseDTO saveTags(List<TagDTO> tagDTOList) {
 
-        ResponseDTO res = ValidateTagDTO(tagDTO);
-        if (res != null) return res;
+        if (tagDTOList.isEmpty()) {
+            return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
+        }
 
-        Tag tag = mapper.toTag(tagDTO);
+        List<String> duplicates = findDuplicateNames(tagDTOList);
+
+        if (!duplicates.isEmpty()) {
+            return new ResponseDTO("List has duplicate names " + duplicates, HttpStatus.CONFLICT);
+        }
+
+        for (TagDTO tagDTO : tagDTOList) {
+            ResponseDTO res = ValidateTagDTO(tagDTO);
+            if (res != null) return res;
+        }
+
+        List<Tag> tags = mapper.toTags(tagDTOList);
         User user = getUser();
-        tag.setUser(user);
+        tags.forEach(tag -> tag.setUser(user));
 
-        return new ResponseDTO(mapper.toTagDTO(repository.save(tag)), HttpStatus.CREATED);
+        return new ResponseDTO(mapper.toTagsDTO(repository.saveAll(tags)), HttpStatus.CREATED);
     }
 
     @Override
@@ -104,12 +116,25 @@ public class TagService implements ITagService {
 
     private ResponseDTO ValidateTagDTO(TagDTO tagDTO) {
         if (tagDTO == null || tagDTO.getName() == null || tagDTO.getName().isEmpty() || tagDTO.getName().isBlank()) {
-            return new ResponseDTO("Check Request Body", HttpStatus.BAD_REQUEST);
+            return new ResponseDTO("Check Request Body: " + tagDTO, HttpStatus.BAD_REQUEST);
         }
         if (repository.existsByName(tagDTO.getName())) {
-            return new ResponseDTO("Name already exists", HttpStatus.CONFLICT);
+            return new ResponseDTO("Name already exists: " + tagDTO.getName(), HttpStatus.CONFLICT);
         }
         return null;
+    }
+
+    private List<String> findDuplicateNames(List<TagDTO> tagDTOList) {
+        Map<String, Integer> nameCount = new HashMap<>();
+        Set<String> duplicates = new HashSet<>();
+        for (TagDTO tagDTO : tagDTOList) {
+            String name = tagDTO.getName();
+            nameCount.put(name, nameCount.getOrDefault(name, 0) + 1);
+            if (nameCount.get(name) > 1) {
+                duplicates.add(name);
+            }
+        }
+        return new ArrayList<>(duplicates);
     }
 
     private Tag getTag(Long tagId) {
