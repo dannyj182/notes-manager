@@ -7,8 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ITagRepository extends JpaRepository<Tag, Long> {
     Page<Tag> findAllByUser(User user, Pageable pageable);
-    boolean existsByName(String name);
+    List<Tag> findByNameIn(List<String> names);
 }

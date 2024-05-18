@@ -46,20 +46,8 @@ public class TagService implements ITagService {
     @Transactional
     public ResponseDTO saveTags(List<TagDTO> tagDTOList) {
 
-        if (tagDTOList.isEmpty()) {
-            return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
-        }
-
-        List<String> duplicates = findDuplicateNames(tagDTOList);
-
-        if (!duplicates.isEmpty()) {
-            return new ResponseDTO("List has duplicate names " + duplicates, HttpStatus.CONFLICT);
-        }
-
-        for (TagDTO tagDTO : tagDTOList) {
-            ResponseDTO res = ValidateTagDTO(tagDTO);
-            if (res != null) return res;
-        }
+        ResponseDTO res = validateTagDTOList(tagDTOList);
+        if (res != null) return res;
 
         List<Tag> tags = mapper.toTags(tagDTOList);
         User user = getUser();
@@ -72,25 +60,8 @@ public class TagService implements ITagService {
     @Transactional
     public ResponseDTO editTags(List<TagDTO> tagDTOList) {
 
-        if (tagDTOList.isEmpty()) {
-            return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
-        }
-
-        for (TagDTO tagDTO : tagDTOList) {
-            ResponseDTO res = ValidateTagDTO(tagDTO);
-            if (res != null) return res;
-        }
-
-        Map<String, List<String>> duplicates = findDuplicateNamesAndIds(tagDTOList);
-        List<String> names = duplicates.get("names");
-        List<String> tagIds = duplicates.get("tagIds");
-
-        if (!names.isEmpty()) {
-            return new ResponseDTO("List has duplicate names " + names, HttpStatus.CONFLICT);
-        }
-        if (!tagIds.isEmpty()) {
-            return new ResponseDTO("List has duplicate tagIds " + tagIds, HttpStatus.CONFLICT);
-        }
+        ResponseDTO res = validateTagDTOList(tagDTOList);
+        if (res != null) return res;
 
         List<Long> ids = tagDTOList.stream().map(TagDTO::getTagId).toList();
         List<Tag> tags = repository.findAllById(ids);
@@ -140,30 +111,49 @@ public class TagService implements ITagService {
         return userService.findByUsername();
     }
 
-    private ResponseDTO ValidateTagDTO(TagDTO tagDTO) {
+    private ResponseDTO validateTagDTOList(List<TagDTO> tagDTOList) {
+
+        if (tagDTOList.isEmpty()) {
+            return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
+        }
+
+        for (TagDTO tagDTO : tagDTOList) {
+            ResponseDTO res = validateTagDTO(tagDTO);
+            if (res != null) return res;
+        }
+
+        List<String> nameList = tagDTOList.stream().map(TagDTO::getName).toList();
+        List<Tag> tags = repository.findByNameIn(nameList);
+        nameList = tags.stream().map(Tag::getName).toList();
+
+        if (!nameList.isEmpty()) {
+            return new ResponseDTO("The names already exist: " + nameList, HttpStatus.CONFLICT);
+        }
+
+        Map<String, List<String>> duplicates = findDuplicateNamesAndIds(tagDTOList);
+
+        List<String> names = duplicates.get("names");
+        if (!names.isEmpty()) {
+            return new ResponseDTO("List has duplicate names: " + names, HttpStatus.CONFLICT);
+        }
+
+        List<String> tagIds = duplicates.get("tagIds");
+        if (!tagIds.isEmpty()) {
+            return new ResponseDTO("List has duplicate tagIds: " + tagIds, HttpStatus.CONFLICT);
+        }
+
+        return null;
+    }
+
+    private ResponseDTO validateTagDTO(TagDTO tagDTO) {
         if (tagDTO == null || tagDTO.getName() == null || tagDTO.getName().isEmpty() || tagDTO.getName().isBlank()) {
             return new ResponseDTO("Check Request Body: " + tagDTO, HttpStatus.BAD_REQUEST);
-        }
-        if (repository.existsByName(tagDTO.getName())) {
-            return new ResponseDTO("Name already exists: " + tagDTO.getName(), HttpStatus.CONFLICT);
         }
         return null;
     }
 
-    private List<String> findDuplicateNames(List<TagDTO> tagDTOList) {
-        Map<String, Integer> nameCount = new HashMap<>();
-        Set<String> duplicates = new HashSet<>();
-        for (TagDTO tagDTO : tagDTOList) {
-            String name = tagDTO.getName();
-            nameCount.put(name, nameCount.getOrDefault(name, 0) + 1);
-            if (nameCount.get(name) > 1) {
-                duplicates.add(name);
-            }
-        }
-        return new ArrayList<>(duplicates);
-    }
-
     private static Map<String, List<String>> findDuplicateNamesAndIds(List<TagDTO> tagDTOList) {
+
         Map<String, Long> nameCount = new HashMap<>();
         Map<Long, Long> tagIdCount = new HashMap<>();
         Set<String> duplicateNames = new HashSet<>();
@@ -187,9 +177,7 @@ public class TagService implements ITagService {
 
         Map<String, List<String>> result = new HashMap<>();
         result.put("names", new ArrayList<>(duplicateNames));
-        result.put("tagIds", duplicateTagIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.toList()));
+        result.put("tagIds", duplicateTagIds.stream().map(String::valueOf).collect(Collectors.toList()));
 
         return result;
     }
