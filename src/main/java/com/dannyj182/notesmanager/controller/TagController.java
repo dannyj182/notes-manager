@@ -31,9 +31,9 @@ public class TagController {
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
-    @PutMapping("/{tagId}")
-    public ResponseEntity<Object> editTag(@PathVariable Long tagId, @RequestBody TagDTO tagDTO){
-        ResponseDTO res = service.editTag(tagId, tagDTO);
+    @PutMapping("/")
+    public ResponseEntity<Object> editTags(@RequestBody List<TagDTO> tagDTOList){
+        ResponseDTO res = service.editTags(tagDTOList);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
 
     }
