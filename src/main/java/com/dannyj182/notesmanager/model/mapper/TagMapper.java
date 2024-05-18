@@ -15,6 +15,8 @@ public interface TagMapper {
 
     List<TagDTO> toTagsDTO(List<Tag> tags);
 
+    List<Tag> toTags(List<TagDTO> tagDTOList);
+
     @Mappings({
             @Mapping(target = "user", ignore = true),
     })
