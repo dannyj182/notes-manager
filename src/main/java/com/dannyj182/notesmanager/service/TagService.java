@@ -129,7 +129,7 @@ public class TagService implements ITagService {
         }
 
         List<String> nameList = tagDTOList.stream().map(TagDTO::getName).toList();
-        List<Tag> tags = repository.findByNameIn(nameList);
+        List<Tag> tags = repository.findAllByNameIn(nameList);
         nameList = tags.stream().map(Tag::getName).toList();
 
         if (!nameList.isEmpty()) {
