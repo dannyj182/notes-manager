@@ -7,7 +7,7 @@ import com.dannyj182.notesmanager.model.entity.Tag;
 import java.util.List;
 
 public interface ITagService {
-    ResponseDTO findTagsByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
+    ResponseDTO findTagsByUser(Long tagId, Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
     ResponseDTO saveTags(List<TagDTO> tagDTOList);
     ResponseDTO editTags(List<TagDTO> tagDTOList);
     ResponseDTO deleteTag(Long tagId, Boolean forceDelete);

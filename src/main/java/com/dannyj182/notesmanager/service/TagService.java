@@ -31,7 +31,13 @@ public class TagService implements ITagService {
 
     @Override
     @Transactional
-    public ResponseDTO findTagsByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection) {
+    public ResponseDTO findTagsByUser(Long tagId, Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection) {
+
+        if (tagId != null) {
+            return repository.findByTagIdAndUser(tagId, getUser())
+                    .map(tag -> new ResponseDTO(mapper.toTagDTO(tag), HttpStatus.OK))
+                    .orElseGet(() -> new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND));
+        }
 
         ResponseDTO res = Validator.ValidateParams(pageNumber, pageSize, sortBy, sortDirection, Tag.class);
         if (res != null) return res;
