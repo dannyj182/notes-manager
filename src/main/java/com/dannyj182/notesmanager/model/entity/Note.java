@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "notes")
 public class Note extends Auditable {
 
     @Id
