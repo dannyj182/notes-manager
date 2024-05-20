@@ -13,5 +13,5 @@ import java.util.List;
 @Repository
 public interface INoteRepository extends JpaRepository<Note, Long> {
     Page<Note> findAllByUser(User user, Pageable pageable);
-    List<Note> findAllByTagsContains(Tag tag);
+    List<Note> findAllByTagsIn(List<Tag> tags);
 }

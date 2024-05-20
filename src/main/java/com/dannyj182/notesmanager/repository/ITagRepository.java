@@ -15,4 +15,5 @@ public interface ITagRepository extends JpaRepository<Tag, Long> {
     Page<Tag> findAllByUser(User user, Pageable pageable);
     List<Tag> findAllByNameIn(List<String> names);
     Optional<Tag> findByTagIdAndUser(Long tagId, User user);
+    List<Tag> findAllByTagIdInAndUser(List<Long> tagIds, User user);
 }

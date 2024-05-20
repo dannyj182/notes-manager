@@ -90,27 +90,29 @@ public class TagService implements ITagService {
 
     @Override
     @Transactional
-    public ResponseDTO deleteTag(Long tagId, Boolean forceDelete) {
+    public ResponseDTO deleteTags(List<Long> tagIds, Boolean forceDelete) {
 
-        Tag tag = getTag(tagId);
+        List<Tag> tags = repository.findAllByTagIdInAndUser(tagIds, getUser());
 
-        if (tag == null) {
-            return new ResponseDTO("Tag not found", HttpStatus.NOT_FOUND);
+        if (tags.isEmpty()) {
+            return new ResponseDTO("Tags not found", HttpStatus.NOT_FOUND);
         }
 
-        List<Note> noteList = noteRepository.findAllByTagsContains(tag);
+        tags.forEach(tag -> System.out.println(tag.getName()));
 
-        if (!noteList.isEmpty()) {
+        List<Note> notes = noteRepository.findAllByTagsIn(tags);
+
+        if (!notes.isEmpty()) {
             if (forceDelete) {
-                noteList.forEach(note -> note.getTags().remove(tag));
-                noteRepository.saveAll(noteList);
+                notes.forEach(note -> note.getTags().removeAll(tags));
+                noteRepository.saveAll(notes);
             } else {
-                return new ResponseDTO("The tag cannot be deleted, it is associated with one or more notes", HttpStatus.CONFLICT);
+                return new ResponseDTO("Tags cannot be deleted, they are associated with one or more notes", HttpStatus.CONFLICT);
             }
         }
 
-        repository.deleteById(tagId);
-        return new ResponseDTO("Tag successfully deleted", HttpStatus.OK);
+        repository.deleteAll(tags);
+        return new ResponseDTO("Tags successfully deleted", HttpStatus.OK);
     }
 
     private User getUser() {
@@ -186,10 +188,6 @@ public class TagService implements ITagService {
         result.put("tagIds", duplicateTagIds.stream().map(String::valueOf).collect(Collectors.toList()));
 
         return result;
-    }
-
-    private Tag getTag(Long tagId) {
-        return repository.findById(tagId).orElse(null);
     }
 
     @Override

@@ -10,7 +10,7 @@ public interface ITagService {
     ResponseDTO findTagsByUser(Long tagId, Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
     ResponseDTO saveTags(List<TagDTO> tagDTOList);
     ResponseDTO editTags(List<TagDTO> tagDTOList);
-    ResponseDTO deleteTag(Long tagId, Boolean forceDelete);
+    ResponseDTO deleteTags(List<Long> tagIds, Boolean forceDelete);
     List<Tag> findAllById(List<TagDTO> tagDTOList);
     boolean checkTagsForNullTagId(List<TagDTO> tags);
 }

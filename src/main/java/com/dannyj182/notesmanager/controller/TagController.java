@@ -39,10 +39,10 @@ public class TagController {
 
     }
 
-    @DeleteMapping("/{tagId}")
-    public ResponseEntity<Object> deleteTag(@PathVariable Long tagId,
-                                            @RequestParam(defaultValue = "false") Boolean forceDelete){
-        ResponseDTO res = service.deleteTag(tagId, forceDelete);
+    @DeleteMapping("/")
+    public ResponseEntity<Object> deleteTags(@RequestBody List<Long> tagIds,
+                                             @RequestParam(defaultValue = "false") Boolean forceDelete){
+        ResponseDTO res = service.deleteTags(tagIds, forceDelete);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 }
