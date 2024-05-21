@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = {TagMapper.class})
 public interface NoteMapper {
 
@@ -13,4 +15,6 @@ public interface NoteMapper {
             @Mapping(source = "status.name", target = "status")
     })
     NoteDTO toNoteDTO(Note note);
+
+    List<NoteDTO> toNotesDTO(List<Note> notes);
 }
