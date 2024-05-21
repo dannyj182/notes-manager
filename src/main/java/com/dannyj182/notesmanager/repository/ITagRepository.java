@@ -13,7 +13,10 @@ import java.util.Optional;
 @Repository
 public interface ITagRepository extends JpaRepository<Tag, Long> {
     Page<Tag> findAllByUser(User user, Pageable pageable);
+
     List<Tag> findAllByNameInAndUser(List<String> names, User user);
+
     Optional<Tag> findByTagIdAndUser(Long tagId, User user);
+
     List<Tag> findAllByTagIdInAndUser(List<Long> tagIds, User user);
 }
