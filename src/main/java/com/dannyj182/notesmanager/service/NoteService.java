@@ -94,15 +94,16 @@ public class NoteService implements INoteService {
 
     @Override
     @Transactional
-    public ResponseDTO deleteNote(Long noteId) {
+    public ResponseDTO deleteNotes(List<Long> noteIds) {
 
-        Note note = getNote(noteId);
+        List<Note> notes = repository.findAllByNoteIdInAndUser(noteIds, getUser());
 
-        ResponseDTO res = validateNote(note);
-        if (res != null) return res;
+        if (notes.isEmpty()){
+            return new ResponseDTO("Notes not found", HttpStatus.NOT_FOUND);
+        }
 
-        repository.deleteById(noteId);
-        return new ResponseDTO("Note successfully deleted", HttpStatus.OK);
+        repository.deleteAll(notes);
+        return new ResponseDTO("Notes successfully deleted", HttpStatus.OK);
     }
 
     private User getUser() {

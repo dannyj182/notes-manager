@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/notes")
 @AllArgsConstructor
@@ -36,9 +38,9 @@ public class NoteController {
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
-    @DeleteMapping("/{noteId}")
-    public ResponseEntity<Object> deleteNote(@PathVariable Long noteId) {
-        ResponseDTO res = service.deleteNote(noteId);
+    @DeleteMapping("/")
+    public ResponseEntity<Object> deleteNotes(@RequestBody List<Long> noteIds) {
+        ResponseDTO res = service.deleteNotes(noteIds);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 }

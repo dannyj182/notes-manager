@@ -18,4 +18,6 @@ public interface INoteRepository extends JpaRepository<Note, Long> {
     List<Note> findAllByTagsIn(List<Tag> tags);
 
     Optional<Note> findByNoteIdAndUser(Long noteId, User user);
+
+    List<Note> findAllByNoteIdInAndUser(List<Long> noteIds, User user);
 }
