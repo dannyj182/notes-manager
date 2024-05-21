@@ -33,7 +33,13 @@ public class NoteService implements INoteService {
 
     @Override
     @Transactional
-    public ResponseDTO findNotesByUser(Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection) {
+    public ResponseDTO findNotesByUser(Long noteId, Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection) {
+
+        if (noteId != null) {
+            return repository.findByNoteIdAndUser(noteId, getUser())
+                    .map(note -> new ResponseDTO(mapper.toNoteDTO(note), HttpStatus.OK))
+                    .orElseGet(() -> new ResponseDTO("Note not found", HttpStatus.NOT_FOUND));
+        }
 
         ResponseDTO res = Validator.ValidateParams(pageNumber, pageSize, sortBy, sortDirection, Note.class);
         if (res != null) return res;

@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface INoteRepository extends JpaRepository<Note, Long> {
     Page<Note> findAllByUser(User user, Pageable pageable);
     List<Note> findAllByTagsIn(List<Tag> tags);
+    Optional<Note> findByNoteIdAndUser(Long noteId, User user);
 }
