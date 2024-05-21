@@ -27,8 +27,8 @@ public class NoteController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Object> saveNote(@RequestBody NoteDTO noteDTO) {
-        ResponseDTO res = service.saveNote(noteDTO);
+    public ResponseEntity<Object> saveNotes(@RequestBody List<NoteDTO> noteDTOList) {
+        ResponseDTO res = service.saveNotes(noteDTOList);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 

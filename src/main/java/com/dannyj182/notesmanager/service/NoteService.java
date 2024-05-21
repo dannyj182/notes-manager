@@ -2,6 +2,7 @@ package com.dannyj182.notesmanager.service;
 
 import com.dannyj182.notesmanager.model.dto.NoteDTO;
 import com.dannyj182.notesmanager.model.dto.ResponseDTO;
+import com.dannyj182.notesmanager.model.dto.TagDTO;
 import com.dannyj182.notesmanager.model.entity.Note;
 import com.dannyj182.notesmanager.model.entity.Status;
 import com.dannyj182.notesmanager.model.entity.Tag;
@@ -52,24 +53,31 @@ public class NoteService implements INoteService {
 
     @Override
     @Transactional
-    public ResponseDTO saveNote(NoteDTO noteDTO) {
+    public ResponseDTO saveNotes(List<NoteDTO> noteDTOList) {
 
-        ResponseDTO res = validateNoteDTO(noteDTO);
-        if (res != null) return res;
+        if (noteDTOList.isEmpty()) {
+            return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
+        } else {
+            List<Note> notes = new ArrayList<>();
 
-        User user = getUser();
-        if (user == null) {
-            return new ResponseDTO(null, HttpStatus.FORBIDDEN);
+            User user = getUser();
+
+            for (NoteDTO noteDTO : noteDTOList) {
+
+                ResponseDTO res = validateNoteDTO(noteDTO);
+                if (res != null) return res;
+
+                Note note = new Note();
+
+                res = setNote(noteDTO, note);
+                if (res != null) return res;
+
+                note.setUser(user);
+                notes.add(note);
+            }
+
+            return new ResponseDTO(mapper.toNotesDTO(repository.saveAll(notes)), HttpStatus.CREATED);
         }
-
-        Note note = new Note();
-
-        res = setNote(noteDTO, note);
-        if (res != null) return res;
-
-        note.setUser(user);
-
-        return new ResponseDTO(mapper.toNoteDTO(repository.save(note)), HttpStatus.CREATED);
     }
 
     @Override
@@ -98,7 +106,7 @@ public class NoteService implements INoteService {
 
         List<Note> notes = repository.findAllByNoteIdInAndUser(noteIds, getUser());
 
-        if (notes.isEmpty()){
+        if (notes.isEmpty()) {
             return new ResponseDTO("Notes not found", HttpStatus.NOT_FOUND);
         }
 
@@ -112,16 +120,16 @@ public class NoteService implements INoteService {
 
     private ResponseDTO validateNoteDTO(NoteDTO dto) {
         if (dto.getTitle() == null || dto.getTitle().isEmpty() || dto.getTitle().isBlank()) {
-            return new ResponseDTO("Check Request Body (Title)", HttpStatus.BAD_REQUEST);
+            return new ResponseDTO("Check Request Body (Title): " + dto, HttpStatus.BAD_REQUEST);
         }
         if (dto.getDescription() == null || dto.getDescription().isEmpty() || dto.getDescription().isBlank()) {
-            return new ResponseDTO("Check Request Body (Description)", HttpStatus.BAD_REQUEST);
+            return new ResponseDTO("Check Request Body (Description): " + dto, HttpStatus.BAD_REQUEST);
         }
         if (dto.getStatus() == null || dto.getStatus().isEmpty() || dto.getStatus().isBlank()) {
-            return new ResponseDTO("Check Request Body (Status)", HttpStatus.BAD_REQUEST);
+            return new ResponseDTO("Check Request Body (Status): " + dto, HttpStatus.BAD_REQUEST);
         }
         if (checkTags(dto)) {
-            return new ResponseDTO("Check Request Body (Tags)", HttpStatus.BAD_REQUEST);
+            return new ResponseDTO("Check Request Body (Tags): " + dto, HttpStatus.BAD_REQUEST);
         }
         return null;
     }
@@ -164,7 +172,7 @@ public class NoteService implements INoteService {
     private ResponseDTO validateAndSetStatus(NoteDTO noteDTO, Note note) {
         Status status = getStatus(noteDTO.getStatus().toLowerCase());
         if (status == null) {
-            return new ResponseDTO("Status not found", HttpStatus.NOT_FOUND);
+            return new ResponseDTO("Status not found: " + noteDTO.getStatus(), HttpStatus.NOT_FOUND);
         } else {
             note.setStatus(status);
             return null;
@@ -177,11 +185,12 @@ public class NoteService implements INoteService {
 
     private ResponseDTO validateAndSetTags(NoteDTO noteDTO, Note note) {
         if (noteDTO.getTags() != null) {
-            List<Tag> tagList = tagService.findAllById(noteDTO.getTags());
+            List<Long> tagIds = noteDTO.getTags().stream().map(TagDTO::getTagId).toList();
+            List<Tag> tagList = tagService.findAllByTagIdInAndUser(tagIds);
             if (noteDTO.getTags().size() == tagList.size()) {
                 note.setTags(tagList);
             } else {
-                return new ResponseDTO("Check Request Body (Tags)", HttpStatus.CONFLICT);
+                return new ResponseDTO("Check Request Body (Tags): " + noteDTO.getTags(), HttpStatus.CONFLICT);
             }
         } else {
             note.setTags(new ArrayList<>());

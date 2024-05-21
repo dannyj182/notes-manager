@@ -8,7 +8,7 @@ import java.util.List;
 public interface INoteService {
     ResponseDTO findNotesByUser(Long noteId, Integer pageNumber, Integer pageSize, String[] sortBy, String sortDirection);
 
-    ResponseDTO saveNote(NoteDTO noteDTO);
+    ResponseDTO saveNotes(List<NoteDTO> noteDTOList);
 
     ResponseDTO editNote(Long noteId, NoteDTO noteDTO);
 
