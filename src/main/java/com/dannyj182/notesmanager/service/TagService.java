@@ -98,8 +98,6 @@ public class TagService implements ITagService {
             return new ResponseDTO("Tags not found", HttpStatus.NOT_FOUND);
         }
 
-        tags.forEach(tag -> System.out.println(tag.getName()));
-
         List<Note> notes = noteRepository.findAllByTagsIn(tags);
 
         if (!notes.isEmpty()) {
