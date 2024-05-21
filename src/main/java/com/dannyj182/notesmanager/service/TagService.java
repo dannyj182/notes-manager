@@ -69,8 +69,8 @@ public class TagService implements ITagService {
         ResponseDTO res = validateTagDTOList(tagDTOList);
         if (res != null) return res;
 
-        List<Long> ids = tagDTOList.stream().map(TagDTO::getTagId).toList();
-        List<Tag> tags = repository.findAllById(ids);
+        List<Long> tagIds = tagDTOList.stream().map(TagDTO::getTagId).toList();
+        List<Tag> tags = repository.findAllByTagIdInAndUser(tagIds, getUser());
 
         if (tags.isEmpty()) {
             return new ResponseDTO("Tags not found", HttpStatus.NOT_FOUND);
@@ -130,14 +130,6 @@ public class TagService implements ITagService {
             if (res != null) return res;
         }
 
-        List<String> nameList = tagDTOList.stream().map(TagDTO::getName).toList();
-        List<Tag> tags = repository.findAllByNameIn(nameList);
-        nameList = tags.stream().map(Tag::getName).toList();
-
-        if (!nameList.isEmpty()) {
-            return new ResponseDTO("The names already exist: " + nameList, HttpStatus.CONFLICT);
-        }
-
         Map<String, List<String>> duplicates = findDuplicateNamesAndIds(tagDTOList);
 
         List<String> names = duplicates.get("names");
@@ -148,6 +140,14 @@ public class TagService implements ITagService {
         List<String> tagIds = duplicates.get("tagIds");
         if (!tagIds.isEmpty()) {
             return new ResponseDTO("List has duplicate tagIds: " + tagIds, HttpStatus.CONFLICT);
+        }
+
+        List<String> nameList = tagDTOList.stream().map(TagDTO::getName).toList();
+        List<Tag> tags = repository.findAllByNameInAndUser(nameList, getUser());
+        nameList = tags.stream().map(Tag::getName).toList();
+
+        if (!nameList.isEmpty()) {
+            return new ResponseDTO("The names already exist: " + nameList, HttpStatus.CONFLICT);
         }
 
         return null;
