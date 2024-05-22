@@ -10,7 +10,7 @@ public interface INoteService {
 
     ResponseDTO saveNotes(List<NoteDTO> noteDTOList);
 
-    ResponseDTO editNote(Long noteId, NoteDTO noteDTO);
+    ResponseDTO editNotes(List<NoteDTO> noteDTOList);
 
     ResponseDTO deleteNotes(List<Long> noteIds);
 }

@@ -20,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -82,22 +85,42 @@ public class NoteService implements INoteService {
 
     @Override
     @Transactional
-    public ResponseDTO editNote(Long noteId, NoteDTO noteDTO) {
+    public ResponseDTO editNotes(List<NoteDTO> noteDTOList) {
 
-        ResponseDTO res = validateNoteDTO(noteDTO);
-        if (res != null) return res;
+        if (noteDTOList.isEmpty()) {
+            return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
+        }
 
-        Note note = getNote(noteId);
+        for (NoteDTO noteDTO : noteDTOList) {
+            ResponseDTO res = validateNoteDTO(noteDTO);
+            if (res != null) return res;
+        }
 
-        res = validateNote(note);
-        if (res != null) return res;
+        List<Long> duplicates = findDuplicateIds(noteDTOList);
 
-        res = setNote(noteDTO, note);
-        if (res != null) return res;
+        if (!duplicates.isEmpty()) {
+            return new ResponseDTO("List has duplicate ids: " + duplicates, HttpStatus.CONFLICT);
+        }
 
-        note.setModifiedDate(LocalDateTime.now());
+        List<Long> noteIds = noteDTOList.stream().map(NoteDTO::getNoteId).toList();
+        List<Note> notes = repository.findAllByNoteIdInAndUser(noteIds, getUser());
 
-        return new ResponseDTO(mapper.toNoteDTO(repository.save(note)), HttpStatus.OK);
+        if (notes.isEmpty()) {
+            return new ResponseDTO("Notes not found", HttpStatus.NOT_FOUND);
+        }
+
+        Map<Long, NoteDTO> noteDTOMap = noteDTOList.stream().collect(Collectors.toMap(NoteDTO::getNoteId, noteDTO -> noteDTO));
+
+        for (Note note : notes) {
+            NoteDTO noteDTO = noteDTOMap.get(note.getNoteId());
+            if (noteDTO != null) {
+                ResponseDTO res = setNote(noteDTO, note);
+                if (res != null) return res;
+                note.setModifiedDate(LocalDateTime.now());
+            }
+        }
+
+        return new ResponseDTO(mapper.toNotesDTO(repository.saveAll(notes)), HttpStatus.OK);
     }
 
     @Override
@@ -139,24 +162,6 @@ public class NoteService implements INoteService {
         else return tagService.checkTagsForNullTagId(noteDTO.getTags());
     }
 
-    private Note getNote(long noteId) {
-        return repository.findById(noteId).orElse(null);
-    }
-
-    private ResponseDTO validateNote(Note note) {
-        if (note == null) {
-            return new ResponseDTO("Note not found", HttpStatus.NOT_FOUND);
-        }
-        if (isNotUser(note)) {
-            return new ResponseDTO(null, HttpStatus.FORBIDDEN);
-        }
-        return null;
-    }
-
-    private boolean isNotUser(Note note) {
-        return !note.getUser().getUsername().equalsIgnoreCase(getUser().getUsername());
-    }
-
     private ResponseDTO setNote(NoteDTO noteDTO, Note note) {
 
         note.setTitle(noteDTO.getTitle());
@@ -196,5 +201,19 @@ public class NoteService implements INoteService {
             note.setTags(new ArrayList<>());
         }
         return null;
+    }
+
+    private List<Long> findDuplicateIds(List<NoteDTO> noteDTOList) {
+        Map<Long, Long> noteIdCount = new HashMap<>();
+
+        for (NoteDTO noteDTO : noteDTOList) {
+            Long id = noteDTO.getNoteId();
+            noteIdCount.put(id, noteIdCount.getOrDefault(id, 0L) + 1);
+        }
+
+        return noteIdCount.entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 }

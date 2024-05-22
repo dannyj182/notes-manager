@@ -32,9 +32,9 @@ public class NoteController {
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
-    @PutMapping("/{noteId}")
-    public ResponseEntity<Object> editNote(@PathVariable Long noteId, @RequestBody NoteDTO noteDTO) {
-        ResponseDTO res = service.editNote(noteId, noteDTO);
+    @PutMapping("/")
+    public ResponseEntity<Object> editNotes(@RequestBody List<NoteDTO> noteDTOList) {
+        ResponseDTO res = service.editNotes(noteDTOList);
         return new ResponseEntity<>(res.getBody(), res.getStatus());
     }
 
