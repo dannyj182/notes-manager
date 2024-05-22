@@ -60,27 +60,27 @@ public class NoteService implements INoteService {
 
         if (noteDTOList.isEmpty()) {
             return new ResponseDTO("The list is empty", HttpStatus.BAD_REQUEST);
-        } else {
-            List<Note> notes = new ArrayList<>();
-
-            User user = getUser();
-
-            for (NoteDTO noteDTO : noteDTOList) {
-
-                ResponseDTO res = validateNoteDTO(noteDTO);
-                if (res != null) return res;
-
-                Note note = new Note();
-
-                res = setNote(noteDTO, note);
-                if (res != null) return res;
-
-                note.setUser(user);
-                notes.add(note);
-            }
-
-            return new ResponseDTO(mapper.toNotesDTO(repository.saveAll(notes)), HttpStatus.CREATED);
         }
+
+        List<Note> notes = new ArrayList<>();
+
+        User user = getUser();
+
+        for (NoteDTO noteDTO : noteDTOList) {
+
+            ResponseDTO res = validateNoteDTO(noteDTO);
+            if (res != null) return res;
+
+            Note note = new Note();
+
+            res = setNote(noteDTO, note);
+            if (res != null) return res;
+
+            note.setUser(user);
+            notes.add(note);
+        }
+
+        return new ResponseDTO(mapper.toNotesDTO(repository.saveAll(notes)), HttpStatus.CREATED);
     }
 
     @Override
@@ -178,10 +178,9 @@ public class NoteService implements INoteService {
         Status status = getStatus(noteDTO.getStatus().toLowerCase());
         if (status == null) {
             return new ResponseDTO("Status not found: " + noteDTO.getStatus(), HttpStatus.NOT_FOUND);
-        } else {
-            note.setStatus(status);
-            return null;
         }
+        note.setStatus(status);
+        return null;
     }
 
     private Status getStatus(String name) {
